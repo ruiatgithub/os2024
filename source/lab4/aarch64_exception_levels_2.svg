@@ -1,0 +1,169 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="456.76608" height="209.20704" viewBox="0 0 342.575 156.906" xml:space="preserve" color-interpolation-filters="sRGB" class="st10" version="1.1">
+	
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#ccffff;stroke:#000000;stroke-linecap:butt;stroke-width:0.5}
+		.st2 {fill:#000000;font-family:Arial,Helvetica,sans-serif;font-size:0.666664em}
+		.st3 {stroke:#000000;stroke-dasharray:9.6,4.8;stroke-linecap:butt;stroke-width:1.2}
+		.st4 {fill:none;stroke:none;stroke-linecap:butt;stroke-width:0.5}
+		.st5 {font-size:1em}
+		.st6 {stroke:#000000;stroke-dasharray:4,2;stroke-linecap:butt;stroke-width:0.5}
+		.st7 {fill:#d9d9d9;stroke:#000000;stroke-linecap:butt;stroke-width:0.5}
+		.st8 {fill:#fdefe3;stroke:#000000;stroke-linecap:butt;stroke-width:0.5}
+		.st9 {fill:#7395bf;stroke:#000000;stroke-linecap:butt;stroke-width:0.5}
+		.st10 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<g>
+		<title>Page-1</title>
+		
+		
+		<g id="shape3-1" transform="translate(249.949,-115.303)">
+			<title>Block.3</title>
+			<desc>Secure firmware</desc>
+			
+			
+			
+			
+			<rect x="0" y="129.976" width="92.126" height="26.9291" rx="5.66929" ry="5.66929" class="st1" />
+			<text x="16.94" y="145.84" class="st2">Secure firmware</text>		</g>
+		<g id="shape6-4" transform="translate(401.185,10.7756) rotate(90)">
+			<title>Sheet.6</title>
+			<path d="M0 156.91 L108.78 156.91" class="st3" />
+		</g>
+		<g id="shape7-7" transform="translate(38.7677,-115.303)">
+			<title>Block.7</title>
+			<desc>Application</desc>
+			
+			
+			
+			
+			<rect x="0" y="129.976" width="46.7717" height="26.9291" rx="5.66929" ry="5.66929" class="st1" />
+			<text x="3.82" y="145.84" class="st2">Application</text>		</g>
+		<g id="shape10-10" transform="translate(86.9567,-145.067)">
+			<title>Sheet.10</title>
+			<desc>Normal world</desc>
+			
+			
+			<rect x="0" y="145.567" width="93.5433" height="11.3386" class="st4" />
+			<text x="23.21" y="153.64" class="st2">Normal world</text>		</g>
+		<g id="shape11-13" transform="translate(242.862,-145.067)">
+			<title>Sheet.11</title>
+			<desc>Secure world</desc>
+			
+			
+			<rect x="0" y="145.567" width="93.5433" height="11.3386" class="st4" />
+			<text x="23.43" y="153.64" class="st2">Secure world</text>		</g>
+		<g id="shape1-16" transform="translate(89.7913,-115.303)">
+			<title>Block.1</title>
+			<desc>Application</desc>
+			
+			
+			
+			
+			<rect x="0" y="129.976" width="46.7717" height="26.9291" rx="5.66929" ry="5.66929" class="st1" />
+			<text x="3.82" y="145.84" class="st2">Application</text>		</g>
+		<g id="shape16-19" transform="translate(141.524,-115.303)">
+			<title>Block.16</title>
+			<desc>Application</desc>
+			
+			
+			
+			
+			<rect x="0" y="129.976" width="46.7717" height="26.9291" rx="5.66929" ry="5.66929" class="st1" />
+			<text x="3.82" y="145.84" class="st2">Application</text>		</g>
+		<g id="shape17-22" transform="translate(191.839,-115.303)">
+			<title>Block.17</title>
+			<desc>Application</desc>
+			
+			
+			
+			
+			<rect x="0" y="129.976" width="46.7717" height="26.9291" rx="5.66929" ry="5.66929" class="st1" />
+			<text x="3.82" y="145.84" class="st2">Application</text>		</g>
+		<g id="shape18-25" transform="translate(258.453,-48.689)">
+			<title>Sheet.18</title>
+			<desc>No Hypervisor in Secure world</desc>
+			
+			
+			<rect x="0" y="139.898" width="73.7008" height="17.0079" class="st4" />
+			<text x="7.29" y="146" class="st2">No Hypervisor in <tspan x="13.51" dy="9.5999616" class="st5">Secure world</tspan></text>		</g>
+		<g id="shape24-29" transform="translate(43.0197,-67.1142)">
+			<title>Dynamic connector.24</title>
+			<path d="M0 149.82 L294.8 149.82" class="st6" />
+		</g>
+		<g id="shape26-32" transform="translate(0.5,-125.224)">
+			<title>Sheet.26</title>
+			<desc>EL0</desc>
+			
+			
+			<rect x="0" y="145.567" width="30.8976" height="11.3386" class="st4" />
+			<text x="8.33" y="153.64" class="st2">EL0</text>		</g>
+		<g id="shape27-35" transform="translate(0.5,-90.5)">
+			<title>Sheet.27</title>
+			<desc>EL1</desc>
+			
+			
+			<rect x="0" y="145.567" width="30.8976" height="11.3386" class="st4" />
+			<text x="8.33" y="153.64" class="st2">EL1</text>		</g>
+		<g id="shape28-38" transform="translate(0.5,-11.8386)">
+			<title>Sheet.28</title>
+			<desc>EL3</desc>
+			
+			
+			<rect x="0" y="145.567" width="30.8976" height="11.3386" class="st4" />
+			<text x="8.33" y="153.64" class="st2">EL3</text>		</g>
+		<g id="shape29-41" transform="translate(0.5,-51.5236)">
+			<title>Sheet.29</title>
+			<desc>EL2</desc>
+			
+			
+			<rect x="0" y="145.567" width="30.8976" height="11.3386" class="st4" />
+			<text x="8.33" y="153.64" class="st2">EL2</text>		</g>
+		<g id="shape25-44" transform="translate(43.0197,-34.5157)">
+			<title>Sheet.25</title>
+			<path d="M0 156.91 L201.26 156.91" class="st3" />
+		</g>
+		<g id="shape30-47" transform="translate(40.185,-79.8701)">
+			<title>Sheet.30</title>
+			<desc>Guest OS</desc>
+			
+			
+			<rect x="0" y="131.394" width="96.378" height="25.5118" rx="5.66929" ry="5.66929" class="st7" />
+			<text x="30.63" y="146.55" class="st2">Guest OS</text>		</g>
+		<g id="shape2-50" transform="translate(142.232,-79.8701)">
+			<title>Sheet.2</title>
+			<desc>Guest OS</desc>
+			
+			
+			<rect x="0" y="131.394" width="96.378" height="25.5118" rx="5.66929" ry="5.66929" class="st7" />
+			<text x="30.63" y="146.55" class="st2">Guest OS</text>		</g>
+		<g id="shape8-53" transform="translate(249.949,-79.8701)">
+			<title>Sheet.8</title>
+			<desc>Trusted OS</desc>
+			
+			
+			<rect x="0" y="131.394" width="90.7087" height="25.5118" rx="5.66929" ry="5.66929" class="st7" />
+			<text x="24.9" y="146.55" class="st2">Trusted OS</text>		</g>
+		<g id="shape4-56" transform="translate(40.185,-40.185)">
+			<title>Sheet.4</title>
+			<desc>Hypervisor</desc>
+			
+			
+			<rect x="0" y="128.559" width="198.425" height="28.3465" rx="5.66929" ry="5.66929" class="st8" />
+			<text x="80.1" y="145.13" class="st2">Hypervisor</text>		</g>
+		<g id="shape9-59" transform="translate(40.185,-0.5)">
+			<title>Sheet.9</title>
+			<desc>Secure monitor</desc>
+			
+			
+			<rect x="0" y="128.559" width="300.472" height="28.3465" rx="5.66929" ry="5.66929" class="st9" />
+			<text x="123.11" y="145.13" class="st2">Secure monitor</text>		</g>
+		<g id="shape19-62" transform="translate(42.7835,-103.965)">
+			<title>Dynamic connector.19</title>
+			<path d="M0 149.82 L294.8 149.82" class="st6" />
+		</g>
+	</g>
+</svg>
