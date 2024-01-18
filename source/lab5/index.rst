@@ -450,7 +450,29 @@ GICv2初始化
 
 注意需将 hwi_init.c timer.c prt_tick.c 等文件加入构建系统。
 
-.. hint:: src/kernel， src/kernel/tick 目录下均需加入 CMakeLists.txt， src/ 和 src/bsp/ 下的 CMakeLists.txt 需修改。
+.. hint:: src/kernel， src/kernel/tick 目录下均需加入 CMakeLists.txt， src/ 和 src/bsp/ 下的 CMakeLists.txt 需修改。其中，
+    
+    src/kernel/tick/CMakeLists.txt 类似 src/bsp/CMakeLists.txt
+    
+    src/kernel/CMakeLists.txt 内容为：  add_subdirectory(tick)
+    
+    src/CMakeLists.txt 需修改增加include目录、包含子目录和编译目标： 
+
+        .. code-block:: c
+
+            ... ...
+            include_directories( 
+                ${CMAKE_CURRENT_SOURCE_DIR}/include   # 增加 src/include 目录
+                ${CMAKE_CURRENT_SOURCE_DIR}/bsp
+            )
+
+            add_subdirectory(bsp) 
+            add_subdirectory(kernel) # 增加 kernel 子目录
+
+            list(APPEND OBJS $<TARGET_OBJECTS:bsp> $<TARGET_OBJECTS:tick>) # 增加 $<TARGET_OBJECTS:tick> 目标
+            add_executable(${APP} main.c ${OBJS})
+    
+    后续实验中若新增文件加入构建系统不再赘述，请参照此处。
 
 - 在 OsTickDispatcher 中调用了 OsIntLock 和 OsIntRestore 函数，这两个函数用于关中断和开中断。简单起见，将其放入 prt_exc.c 中。
 

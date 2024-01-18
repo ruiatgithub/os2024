@@ -308,18 +308,16 @@ main.c 修改为调用 PRT_Printf 函数输出信息。
         PRT_Printf("Test PRT_Printf int format %d \n\n", 10);
     }
 
-纳入构建系统
+将新增文件纳入构建系统
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-将新增文件键入 CMake 构建系统
 
 修改 src/bsp/CMakeLists.txt 文件加入新增文件 print.c 和 vsnprintf_s.c
 
-.. code-block:: cmake
-    :linenos:
+    .. code-block:: cmake
+        :linenos:
 
-    set(SRCS start.S prt_reset_vector.S print.c vsnprintf_s.c)
-    add_library(bsp OBJECT ${SRCS})  # OBJECT类型只编译生成.o目标文件，但不实际链接成库
+        set(SRCS start.S prt_reset_vector.S print.c vsnprintf_s.c)
+        add_library(bsp OBJECT ${SRCS})  # OBJECT类型只编译生成.o目标文件，但不实际链接成库
 
 启用 FPU
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
