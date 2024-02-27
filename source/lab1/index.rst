@@ -18,9 +18,46 @@ Linux
 .. code-block:: console
 
 	$ wget https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz 
-	$ tar -xf gcc-arm-10* 
-	$ mv gcc-arm-10* aarch64-none-elf 
+	$ tar -xf  11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz
+	$ mv gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf aarch64-none-elf
+    $ sudo nano /etc/environment
+    # 在PATH末尾添加： /path/to/your/aarch64-none-elf/bin
+    $ source /etc/environment
+    # test
+    $ aarch64-none-elf-gcc --version
 
+.. image:: ldd_gdb.png
+
+可以看到aarch64-none-elf-gdb 需要 libpython3.6m.so.1.0
+
+.. code-block:: console
+
+    $ sudo apt-get install libpython3.6-dev
+    # if not found, one possible solution:
+    $ sudo apt-get install software-properties-common
+    $ sudo add-apt-repository ppa:deadsnakes/ppa
+    $ sudo apt-get update
+    $ sudo apt-get install libpython3.6-dev
+
+    # 对于Ubuntu22来说，python3.6实在是太老了，所以可能需要重新编译源码
+    # 1,install Prerequsities:
+    $ sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libnss3-dev libedit-dev libc6-dev
+    # 2.download python3.6 source code:
+    $ wget https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz
+    $ tar -xzf Python-3.6.15.tgz
+    # configure and install
+    $ cd Python-3.6.15  
+    $ ./configure --enable-optimizations  --enable-shared
+    $ sudo make -j 8  # 根据自己的cpu核心数量
+    $ sudo make altinstall
+    # ln -s /path/to/your/aarchnone-elf-gdb /usr/bin/aarch64-none-elf-gdb
+    $ ldd aarch64-none-elf-gdb
+
+.. image:: ldd_gdb2.png
+
+参考:
+    1. https://stackoverflow.com/questions/43621584/why-cant-i-install-python3-6-dev-on-ubuntu-16-04
+    2. https://stackoverflow.com/questions/72102435/how-to-install-python3-6-on-ubuntu-22-04
 
 Mac
 
@@ -40,6 +77,7 @@ Linux
     $ sudo apt-get update
     $ sudo apt-get install qemu
     $ sudo apt-get install qemu-system
+    $ sudo apt-get install qemu-system-aarch64
 
 Mac
 
@@ -460,6 +498,7 @@ GDB简单调试方法
 - 修改寄存器内容。-exec set $x24 = 0x5
 - 修改指定内存位置的内容。-exec set {int}0x4000000 = 0x1 或者 -exec set *((int *) 0x4000000) = 0x1 
 - 修改指定MMIO 寄存器的内容。 -exec set *((volatile int *) 0x08010004) = 0x1
+- 退出调试 -exec q
 
 总之，可以通过 -exec这种方式可以执行所有的 gdb调试指令。
 
