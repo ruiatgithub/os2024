@@ -6,7 +6,7 @@
 
 .. attention:: 
 
-	Linux请使用ubuntu 18以上的版本开展本系列实验。
+	Linux请使用ubuntu 18以上的版本开展本系列实验（本系列实验已在Ubuntu 18 （64位）版本, MacOS 12 （Intel Core i5）版本上验证）。
 
 安装交叉编译工具链 (aarch64)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -18,8 +18,16 @@ Linux
 .. code-block:: console
 
 	$ wget https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz 
-	$ tar -xf gcc-arm-10* 
-	$ mv gcc-arm-10* aarch64-none-elf 
+	$ tar -xf gcc-arm-* 
+	$ mv gcc-arm-* aarch64-none-elf 
+
+将目录 /path/to/your/aarch64-none-elf/bin 加入到环境变量 PATH 中。
+
+测试工具链是否安装成功
+
+.. code-block:: console
+
+    $ aarch64-none-elf-gcc --version
 
 
 Mac
@@ -29,6 +37,11 @@ Mac
 .. note::
     下载的交叉工具链版本需选择与你宿主机器和目标机器均对应的版本，本系列实验目标机器为： AArch64 bare-metal target (aarch64-none-elf)，再依据你的宿主机器选择相对应的版本。
 
+
+    如果是M1或M2芯片版本的Mac，请使用更新版本的工具链。
+
+.. note::
+    交叉工具链可能会遇到缺少依赖库的问题，请自行检索解决。 Linux 下的 ldd 命令， Mac 下的 otool -L 命令可以查看动态链接库的依赖关系。
 
 安装QEMU模拟器
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -460,8 +473,9 @@ GDB简单调试方法
 - 修改寄存器内容。-exec set $x24 = 0x5
 - 修改指定内存位置的内容。-exec set {int}0x4000000 = 0x1 或者 -exec set *((int *) 0x4000000) = 0x1 
 - 修改指定MMIO 寄存器的内容。 -exec set *((volatile int *) 0x08010004) = 0x1
+- 退出调试 -exec q
 
-总之，可以通过 -exec这种方式可以执行所有的 gdb调试指令。
+总之，可以通过 -exec这种方式可以执行所有的 gdb 调试指令。
 
 
 .. hint::
@@ -520,15 +534,18 @@ runMiniEuler.sh
 lab1 作业
 --------------------------
 
+完成下列实验，并撰写实验报告。
+
 作业1
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 商业操作系统都有复杂的构建系统，试简要分析 UniProton 的构建系统。
 
+.. hint::
+    UniProton 通过在根目录下执行 python build.py m4 （m4是指目标平台，还有如hi3093等）进行构建，所以构建系统的分析可从 build.py 入手进行。
+
 作业2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-学习调试任务
+学习如何调试项目。
 
-.. hint::
-    UniProton 通过在根目录下执行 python build.py m4 （m4是指目标平台，还有如hi3093等）进行构建，所以构建系统的分析可从 build.py 入手进行。
