@@ -17,11 +17,14 @@ Linux
 
 .. code-block:: console
 
-	$ wget https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz 
-	$ tar -xf gcc-arm-* 
-	$ mv gcc-arm-* aarch64-none-elf 
+    # 下载工具链，以11.2版本，宿主机为64位x86 Linux机器为例
+    $ wget https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz 
+    # 解压工具链
+    $ tar -xf gcc-arm-(按Tab键补全)
+    # 重命名工具链目录
+    $ mv gcc-arm-(按Tab键补全) aarch64-none-elf 
 
-将目录 /path/to/your/aarch64-none-elf/bin 加入到环境变量 PATH 中。
+将目录 /path/to/your/aarch64-none-elf/bin （这里对应你自己实际的目录，用 pwd 命令查看）加入到环境变量 PATH 中。 
 
 测试工具链是否安装成功
 
