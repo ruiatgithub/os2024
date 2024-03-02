@@ -17,7 +17,7 @@ Linux
 
 .. code-block:: console
 
-    # 下载工具链，以11.2版本，宿主机为64位x86 Linux机器为例
+    # 下载工具链，以下载工具链版本为11.2，宿主机为x86 64位 Linux机器为例
     $ wget https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz 
     # 解压工具链
     $ tar -xf gcc-arm-(按Tab键补全)
