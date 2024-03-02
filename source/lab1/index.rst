@@ -35,7 +35,7 @@ Linux
 
 Mac
 
-操作方法与Linux相同。但需下载工具链版本为： gcc-arm-11.2-2022.02-darwin-x86_64-aarch64-none-elf.tar.xz。
+操作方法与Linux相同。但需下载工具链版本（Intel芯片）为： gcc-arm-11.2-2022.02-darwin-x86_64-aarch64-none-elf.tar.xz。
 
 .. note::
     下载的交叉工具链版本需选择与你宿主机器和目标机器均对应的版本，本系列实验目标机器为： AArch64 bare-metal target (aarch64-none-elf)，再依据你的宿主机器选择相对应的版本。
