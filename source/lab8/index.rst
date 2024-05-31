@@ -2,6 +2,30 @@
 实验八 分页内存管理 
 =====================
 
+
+Armv8的地址转换
+------------------------------
+
+`ARM Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Context-switching>`_ 中提到：For EL0 and EL1, there are two translation tables. TTBR0_EL1 provides translations for the bottom of Virtual Address space, which is typically application space and TTBR1_EL1 covers the top of Virtual Address space, typically kernel space. This split means that the OS mappings do not have to be replicated in the translation tables of each task. 即TTBR0指向整个虚拟空间下半部分通常用于应用程序的空间，TTBR1指向虚拟空间的上半部分通常用于内核的空间。其中TTBR0除了在EL1中存在外，也在EL2 and EL3中存在，但TTBR1只在EL1中存在 [1]_。
+
+TTBR0_ELn 和 TTBR1_ELn 是页表基地址寄存器 [2]_，地址转换的过程如下所示 [3]_。
+
+.. image:: v2p-translate.svg
+
+In a simple address translation involving only one level of look-up. It assumes we are using a 64KB granule with a 42-bit Virtual Address. The MMU translates a Virtual Address as follows:
+
+1. If VA[63:42] = 1 then TTBR1 is used for the base address for the first page table. When VA[63:42] = 0, TTBR0 is used for the base address for the first page table.
+2. The page table contains 8192 64-bit page table entries, and is indexed using VA[41:29]. The MMU reads the pertinent level 2 page table entry from the table.
+3. The MMU checks the page table entry for validity and whether or not the requested memory access is allowed. Assuming it is valid, the memory access is allowed.
+4. In the above Figure, the page table entry refers to a 512MB page (it is a block descriptor).
+5. Bits [47:29] are taken from this page table entry and form bits [47:29] of the Physical Address.
+6. Because we have a 512MB page, bits [28:0] of the VA are taken to form PA[28:0]. See Effect of granule sizes on translation tables
+7. The full PA[47:0] is returned, along with additional information from the page table entry.
+
+In practice, such a simple translation process severely limits how finely you can divide up your address space. Instead of using only this first-level translation table, a first-level table entry can also point to a second-level page table.
+
+
+
 新建 src/bsp/mmu.c 文件
 
 .. code-block:: c

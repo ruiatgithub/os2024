@@ -1,0 +1,304 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="522.5616" height="433.7424" viewBox="0 0 391.921 325.307" xml:space="preserve" color-interpolation-filters="sRGB" class="st23" version="1.1">
+	
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:none;stroke:none;stroke-linecap:butt;stroke-width:0.75}
+		.st2 {fill:#000000;font-family:'Lucida Sans Typewriter','Lucida Console','Courier New',Courier,monospace;font-size:0.75em}
+		.st3 {fill:#fdefe3;stroke:#000000;stroke-dasharray:0.48,0.24;stroke-linecap:butt;stroke-opacity:0.74;stroke-width:0.24}
+		.st4 {fill:#000000;font-family:Arial,Helvetica,sans-serif;font-size:0.75em}
+		.st5 {fill:#d1ebf1;stroke:#000000;stroke-dasharray:0.48,0.24;stroke-linecap:butt;stroke-opacity:0.74;stroke-width:0.24}
+		.st6 {fill:none;stroke:none;stroke-linecap:butt;stroke-width:0.5}
+		.st7 {fill:#000000;font-family:Arial,Helvetica,sans-serif;font-size:0.666664em}
+		.st8 {marker-start:url(#mrkr4-30);stroke:#000000;stroke-linecap:butt;stroke-width:1}
+		.st9 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.35714285714286}
+		.st10 {fill:#ffffff;stroke:#000000;stroke-dasharray:0.48,0.24;stroke-linecap:butt;stroke-opacity:0.74;stroke-width:0.24}
+		.st11 {font-size:1em}
+		.st12 {fill:#d9d9d9;stroke:#000000;stroke-dasharray:0.48,0.24;stroke-linecap:butt;stroke-opacity:0.74;stroke-width:0.24}
+		.st13 {marker-end:url(#mrkr4-66);stroke:#000000;stroke-linecap:butt;stroke-width:0.5}
+		.st14 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.21739130434783}
+		.st15 {fill:#edcdcb;stroke:#000000;stroke-dasharray:0.48,0.24;stroke-linecap:butt;stroke-opacity:0.74;stroke-width:0.24}
+		.st16 {fill:#ebf1de;stroke:#000000;stroke-dasharray:0.48,0.24;stroke-linecap:butt;stroke-opacity:0.74;stroke-width:0.24}
+		.st17 {marker-end:url(#mrkr4-89);stroke:#000000;stroke-linecap:butt;stroke-width:0.72}
+		.st18 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.28571428571429}
+		.st19 {marker-end:url(#mrkr4-98);marker-start:url(#mrkr4-96);stroke:#000000;stroke-linecap:butt;stroke-width:0.24}
+		.st20 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.11764705882353}
+		.st21 {marker-end:url(#mrkr4-98);stroke:#000000;stroke-linecap:butt;stroke-width:0.24}
+		.st22 {marker-end:url(#mrkr4-114);stroke:#000000;stroke-linecap:butt;stroke-width:0.5}
+		.st23 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Markers">
+		<g id="lend4">
+			<path d="M 2 1 L -0 0 L 2 -1 L 2 1 " style="stroke:none" />
+		</g>
+		<marker overflow="visible" id="mrkr4-30" class="st9" orient="auto">
+			<use xlink:href="#lend4" transform="scale(2.8) " />
+		</marker>
+		<marker overflow="visible" id="mrkr4-66" class="st14" orient="auto">
+			<use xlink:href="#lend4" transform="scale(-4.6,-4.6) " />
+		</marker>
+		<marker overflow="visible" id="mrkr4-89" class="st18" orient="auto">
+			<use xlink:href="#lend4" transform="scale(-3.5,-3.5) " />
+		</marker>
+		<marker overflow="visible" id="mrkr4-96" class="st20" orient="auto">
+			<use xlink:href="#lend4" transform="scale(8.5) " />
+		</marker>
+		<marker overflow="visible" id="mrkr4-98" class="st20" orient="auto">
+			<use xlink:href="#lend4" transform="scale(-8.5,-8.5) " />
+		</marker>
+		<marker overflow="visible" id="mrkr4-114" class="st14" orient="auto">
+			<use xlink:href="#lend4" transform="scale(-4.6,-4.6) " />
+		</marker>
+	</defs>
+	<g>
+		<title>Page-1</title>
+		
+		<g id="shape1-1" transform="translate(160.161,-205.752)">
+			<title>text3132.8</title>
+			<desc>63</desc>
+			
+			
+			<rect x="0" y="313.968" width="14.6455" height="11.3386" class="st1" />
+			<text x="0" y="322.34" class="st2">63</text>		</g>
+		<g id="shape2-4" transform="translate(238.35,-205.752)">
+			<title>text3132.32</title>
+			<desc>0</desc>
+			
+			
+			<rect x="0" y="313.968" width="8.50394" height="11.3386" class="st1" />
+			<text x="3.08" y="322.34" class="st2">0</text>		</g>
+		<g id="shape3-7" transform="translate(127.799,-251.106)">
+			<title>Sheet.3</title>
+			<desc>Level 2 index</desc>
+			
+			
+			<path d="M0 325.31 L99.68 325.31 L99.68 311.13 L0 311.13 L0 325.31 Z" class="st3" />
+			<text x="23.32" y="320.92" class="st4">Level 2 index</text>		</g>
+		<g id="shape4-10" transform="translate(227.484,-251.106)">
+			<title>Sheet.4</title>
+			<desc>Physical address [28:0]</desc>
+			
+			
+			<path d="M0 325.31 L98.74 325.31 L98.74 311.13 L0 311.13 L0 325.31 Z" class="st5" />
+			<text x="2.85" y="320.92" class="st4">Physical address [28:0]</text>		</g>
+		<g id="shape5-13" transform="translate(39.4528,-265.279)">
+			<title>text3132.34</title>
+			<desc>63</desc>
+			
+			
+			<rect x="0" y="313.968" width="14.6455" height="11.3386" class="st1" />
+			<text x="0" y="322.34" class="st2">63</text>		</g>
+		<g id="shape6-16" transform="translate(313.468,-265.279)">
+			<title>text3132.35</title>
+			<desc>0</desc>
+			
+			
+			<rect x="0" y="313.968" width="12.7559" height="11.3386" class="st1" />
+			<text x="7.33" y="322.34" class="st2">0</text>		</g>
+		<g id="shape7-19" transform="translate(99.4526,-103.705)">
+			<title>Sheet.7</title>
+			<desc>Index in table</desc>
+			
+			
+			<rect x="0" y="313.968" width="51.0236" height="11.3386" class="st6" />
+			<text x="1" y="322.04" class="st7">Index in table    </text>		</g>
+		<g id="shape8-22" transform="translate(122.13,-310.634)">
+			<title>Sheet.8</title>
+			<desc>Virtual address from core</desc>
+			
+			
+			<rect x="0" y="311.134" width="124.724" height="14.1732" class="st6" />
+			<text x="12.09" y="320.92" class="st4">Virtual address from core</text>		</g>
+		<g id="shape9-25" transform="translate(-140.815,37.3504) rotate(-90)">
+			<title>Bus 1.49</title>
+			
+			
+			<path d="M5.24 325.31 L5.6 325.31 L22.68 325.31" class="st8" />
+		</g>
+		<g id="shape10-31" transform="translate(124.964,-66.1061)">
+			<title>Sheet.10</title>
+			<desc>Level 2 page table with 8192 entries</desc>
+			
+			
+			<rect x="0" y="315.307" width="136.063" height="10" class="st6" />
+			<text x="3.99" y="322.71" class="st7">Level 2 page table with 8192 entries</text>		</g>
+		<g id="shape11-34" transform="translate(0.24,-173.153)">
+			<title>rect5245-4.6</title>
+			<desc>TTBRx</desc>
+			
+			
+			<path d="M0 325.31 L82.2 325.31 L82.2 311.13 L0 311.13 L0 325.31 Z" class="st10" />
+			<text x="27.1" y="320.92" class="st4">TTBRx</text>		</g>
+		<g id="shape12-37" transform="translate(300.535,-167.484)">
+			<title>Sheet.12</title>
+			<desc>Low bits of virtual address form low bits of physical address</desc>
+			
+			
+			<rect x="0" y="294.126" width="90.8858" height="31.1811" class="st6" />
+			<text x="1" y="302.52" class="st7">Low bits of virtual <tspan x="1" dy="9.5999616" class="st11">address form low bits of </tspan><tspan x="1" dy="9.5999616" class="st11">physical address</tspan></text>		</g>
+		<g id="shape13-42" transform="translate(102.287,-251.106)">
+			<title>rect5245-4.33</title>
+			<path d="M0 325.31 L25.51 325.31 L25.51 311.13 L0 311.13 L0 325.31 Z" class="st10" />
+		</g>
+		<g id="shape14-44" transform="translate(227.72,-265.279)">
+			<title>text3132.36</title>
+			<desc>28</desc>
+			
+			
+			<rect x="0" y="313.968" width="13.4646" height="11.3386" class="st1" />
+			<text x="2.62" y="322.34" class="st2">28</text>		</g>
+		<g id="shape15-47" transform="translate(212.838,-265.279)">
+			<title>text3132.37</title>
+			<desc>29</desc>
+			
+			
+			<rect x="0" y="313.968" width="13.4646" height="11.3386" class="st1" />
+			<text x="2.62" y="322.34" class="st2">29</text>		</g>
+		<g id="shape16-50" transform="translate(122.838,-265.279)">
+			<title>text3132.40</title>
+			<desc>41</desc>
+			
+			
+			<rect x="0" y="313.968" width="13.4646" height="11.3386" class="st1" />
+			<text x="2.62" y="322.34" class="st2">41</text>		</g>
+		<g id="shape17-53" transform="translate(161.815,-120.712)">
+			<title>Sheet.17</title>
+			<path d="M0 325.31 L82.68 325.31 L82.68 313.97 L0 313.97 L0 325.31 Z" class="st12" />
+		</g>
+		<g id="shape18-55" transform="translate(161.815,-78.1928)">
+			<title>Sheet.18</title>
+			<desc>...</desc>
+			
+			
+			<path d="M0 325.31 L82.68 325.31 L82.68 282.79 L0 282.79 L0 325.31 Z" class="st10" />
+			<text x="37.59" y="306.75" class="st4">...</text>		</g>
+		<g id="shape19-58" transform="translate(227.72,-0.24)">
+			<title>Sheet.19</title>
+			<desc>Physical address [28:0]</desc>
+			
+			
+			<path d="M0 325.31 L99.21 325.31 L99.21 311.13 L0 311.13 L0 325.31 Z" class="st5" />
+			<text x="3.08" y="320.92" class="st4">Physical address [28:0]</text>		</g>
+		<g id="shape20-61" transform="translate(-153.495,43.0649) rotate(-84.5077) scale(-1,1)">
+			<title>Bezier line.38</title>
+			<path d="M0 325.31 L0.61 323.63 L1.25 321.99 L1.91 320.39 L2.59 318.83 L3.29 317.31 L4.01 315.82 L4.76 314.38 L5.53 312.97
+						 L6.33 311.59 L7.14 310.26 L7.98 308.96 L8.85 307.71 L9.73 306.49 L10.64 305.3 L11.57 304.16 L12.52 303.05
+						 L13.49 301.99 L14.49 300.96 L15.51 299.97 L16.56 299.01 L17.62 298.1 L18.71 297.22 L19.82 296.38 L20.96
+						 295.58 L22.11 294.81 L23.29 294.09 L24.49 293.4 L25.72 292.75 L26.97 292.14 L28.24 291.56 L29.53 291.03
+						 L30.84 290.53 L32.18 290.07 L33.54 289.65 L34.93 289.26 L36.33 288.92 L37.76 288.61 L39.21 288.34 L40.69
+						 288.11 L42.18 287.91 L43.7 287.75 L45.24 287.64 L46.81 287.56 L48.4 287.51 L50.01 287.51 L51.64 287.54 L53.3
+						 287.62 L54.97 287.73 L56.67 287.87 L58.4 288.06 L60.14 288.28 L64.12 288.9 L66.31 289.29 L68.5 289.7 L70.68
+						 290.14 L72.85 290.6 L75.02 291.09 L77.18 291.6 L79.33 292.13 L81.48 292.7 L83.61 293.28 L85.74 293.9 L87.87
+						 294.53 L89.98 295.2 L92.09 295.88 L94.19 296.6 L96.29 297.34 L98.37 298.1 L100.45 298.89 L102.52 299.7 L104.59
+						 300.54 L106.65 301.4 L108.7 302.29 L110.74 303.21 L112.77 304.15 L114.8 305.11 L116.82 306.1 L118.84 307.12
+						 L120.84 308.16 L122.84 309.23 L124.84 310.32 L126.82 311.43 L128.8 312.57 L130.77 313.74 L132.73 314.93
+						 L134.69 316.15 L136.63 317.39 L138.57 318.66 L140.51 319.95 L142.43 321.27 L144.35 322.61 L144.65 322.82" class="st13" />
+		</g>
+		<g id="shape21-67" transform="translate(8.74394,-106.539)">
+			<title>Sheet.21</title>
+			<desc>Page table base address</desc>
+			
+			
+			<rect x="0" y="299.795" width="56.6929" height="25.5118" class="st6" />
+			<text x="1" y="310.15" class="st7">Page table <tspan x="1" dy="9.5999616" class="st11">base address</tspan></text>		</g>
+		<g id="shape22-71" transform="translate(42.7597,-251.106)">
+			<title>rect5245-4.51</title>
+			<desc>TTBR select</desc>
+			
+			
+			<path d="M0 325.31 L59.53 325.31 L59.53 311.13 L0 311.13 L0 325.31 Z" class="st15" />
+			<text x="5.01" y="320.92" class="st4">TTBR select</text>		</g>
+		<g id="shape23-74" transform="translate(127.09,-0.24)">
+			<title>rect5245-4.44</title>
+			<desc>PA[47:29]</desc>
+			
+			
+			<path d="M0 325.31 L102.05 325.31 L102.05 311.13 L0 311.13 L0 325.31 Z" class="st16" />
+			<text x="31.26" y="320.92" class="st4">PA[47:29]</text>		</g>
+		<g id="shape24-77" transform="translate(42.7597,-0.24)">
+			<title>rect5245-4.52</title>
+			<path d="M0 325.31 L84.33 325.31 L84.33 311.13 L0 311.13 L0 325.31 Z" class="st10" />
+		</g>
+		<g id="shape25-79" transform="translate(161.815,-132.051)">
+			<title>Sheet.25</title>
+			<desc>...</desc>
+			
+			
+			<path d="M0 325.31 L82.68 325.31 L82.68 248.77 L0 248.77 L0 325.31 Z" class="st10" />
+			<text x="37.59" y="289.74" class="st4">...</text>		</g>
+		<g id="shape26-82" transform="translate(189.667,-120.712)">
+			<title>Sheet.26</title>
+			<path d="M0 325.31 L35.95 325.31 L35.95 313.97 L0 313.97 L0 325.31 Z" class="st16" />
+		</g>
+		<g id="shape27-84" transform="translate(390.744,74.2008) rotate(90)">
+			<title>Sheet.27</title>
+			<path d="M0 325.31 L57.32 325.31" class="st17" />
+		</g>
+		<g id="shape28-90" transform="translate(484.287,204.594) rotate(90)">
+			<title>Sheet.28</title>
+			<path d="M3.72 325.31 L4.08 325.31 L38.44 325.31" class="st19" />
+		</g>
+		<g id="shape29-99" transform="translate(623.185,74.2008) rotate(90)">
+			<title>Sheet.29</title>
+			<path d="M0 325.31 L234.03 325.31" class="st21" />
+		</g>
+		<g id="shape30-104" transform="translate(238.857,-102.198) rotate(38.3333)">
+			<title>Bezier line.11</title>
+			<path d="M0 325.31 L3.23 327.37 L6.41 329.36 L9.56 331.29 L12.66 333.15 L15.72 334.94 L18.74 336.67 L21.71 338.32 L24.65
+						 339.91 L27.54 341.43 L30.39 342.88 L33.2 344.27 L35.96 345.59 L38.69 346.84 L41.37 348.02 L44.01 349.13
+						 L46.61 350.18 L49.17 351.16 L51.69 352.07 L54.16 352.92 L56.59 353.69 L58.98 354.4 L61.33 355.04 L63.64
+						 355.61 L65.9 356.12 L68.13 356.56 L71.83 357.13 L73.39 357.28 L74.98 357.37 L76.61 357.4 L78.28 357.37 L79.98
+						 357.29 L81.72 357.15 L83.5 356.95 L85.31 356.69 L87.16 356.37 L89.04 356 L90.96 355.57 L92.92 355.08 L94.91
+						 354.53 L96.94 353.93 L99.01 353.27 L101.11 352.54 L103.25 351.77 L105.43 350.93 L107.64 350.04 L109.88 349.08
+						 L112.17 348.07 L114.49 347.01 L116.84 345.88 L119.24 344.7 L121.66 343.45 L124.13 342.15 L126.63 340.8 L129.17
+						 339.38 L131.74 337.91 L134.35 336.38 L137 334.79 L139.68 333.14 L142.4 331.44 L145.16 329.68 L147.95 327.86
+						 L148.25 327.66" class="st13" />
+		</g>
+		<g id="shape31-109" transform="translate(-115.222,135.127) rotate(-78.6901) scale(-1,1)">
+			<title>Bezier line.13</title>
+			<path d="M0 325.31 L0.33 327.93 L0.7 330.5 L1.08 333.02 L1.5 335.5 L1.94 337.92 L2.41 340.3 L2.91 342.64 L3.43 344.92
+						 L3.98 347.15 L4.56 349.34 L5.16 351.48 L5.79 353.57 L6.45 355.62 L7.13 357.61 L7.84 359.56 L8.58 361.46
+						 L9.35 363.31 L10.14 365.11 L10.96 366.87 L11.8 368.57 L12.67 370.23 L13.57 371.84 L14.5 373.4 L15.45 374.92
+						 L16.43 376.39 L17.44 377.8 L18.47 379.18 L19.53 380.5 L20.62 381.77 L21.73 383 L22.88 384.18 L24.04 385.31
+						 L25.24 386.39 L26.46 387.42 L27.71 388.41 L28.98 389.35 L30.29 390.24 L31.62 391.08 L32.97 391.88 L34.36
+						 392.62 L35.77 393.32 L37.2 393.97 L38.67 394.57 L40.16 395.12 L42.93 395.99 L44.18 396.3 L45.44 396.54 L46.7
+						 396.72 L47.96 396.84 L49.22 396.9 L50.48 396.9 L51.74 396.84 L53.01 396.71 L54.27 396.53 L55.54 396.29 L56.81
+						 395.98 L58.08 395.62 L59.35 395.19 L60.63 394.7 L61.9 394.15 L63.18 393.54 L64.46 392.87 L65.73 392.14 L67.02
+						 391.35 L68.3 390.5 L69.58 389.58 L70.87 388.61 L72.15 387.57 L73.44 386.48 L74.73 385.32 L76.02 384.1 L77.31
+						 382.82 L78.61 381.48 L79.9 380.08 L81.2 378.62 L82.49 377.1 L83.79 375.52 L85.09 373.87 L86.4 372.17 L87.7
+						 370.4 L89.01 368.58 L90.31 366.69 L91.62 364.74 L92.93 362.74 L94.24 360.67 L95.55 358.54 L96.87 356.34
+						 L98.18 354.09 L99.5 351.78 L100.81 349.41 L102.13 346.97 L103.46 344.48 L104.78 341.92 L106.1 339.3 L107.43
+						 336.63 L108.75 333.89 L110.08 331.09 L111.41 328.23 L112.74 325.31" class="st22" />
+		</g>
+		<g id="shape32-115" transform="translate(161.815,-28.5865)">
+			<title>Sheet.32</title>
+			<desc>Page table entry contains PA [47:29]</desc>
+			
+			
+			<rect x="0" y="299.795" width="79.3701" height="25.5118" class="st6" />
+			<text x="1" y="310.15" class="st7">Page table entry <tspan x="1" dy="9.5999616" class="st11">contains PA </tspan>[47:29]</text>		</g>
+		<g id="shape33-119" transform="translate(173.153,-132.76)">
+			<title>Sheet.33</title>
+			<desc>Page table entry</desc>
+			
+			
+			<rect x="0" y="315.386" width="62.3622" height="9.92126" class="st6" />
+			<text x="1" y="322.75" class="st7">Page table entry</text>		</g>
+		<g id="shape34-122" transform="translate(19.5671,-1.65732)">
+			<title>Sheet.34</title>
+			<desc>PA</desc>
+			
+			
+			<rect x="0" y="313.968" width="17.5233" height="11.3386" class="st6" />
+			<text x="1" y="322.04" class="st7">PA</text>		</g>
+		<g id="shape35-125" transform="translate(19.5671,-251.106)">
+			<title>Sheet.35</title>
+			<desc>VA</desc>
+			
+			
+			<rect x="0" y="313.968" width="17.5233" height="11.3386" class="st6" />
+			<text x="1" y="322.04" class="st7">VA</text>		</g>
+	</g>
+</svg>
