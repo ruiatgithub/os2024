@@ -19,6 +19,7 @@
    lab6/index
    lab7/index
    lab8/index
+   lab10/index
    lab9/index
    errs/index
    references/index
