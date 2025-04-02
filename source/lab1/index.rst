@@ -177,6 +177,8 @@ start.S 源码
 
 .. tip:: mrs类指令阅读技巧： MRS（Move to Register from System register）
 
+.. tip:: 寄存器的相关描述可访问`AArch64 System Registers <https://developer.arm.com/documentation/ddi0601/latest/?lang=en>`_ 查看
+
 prt_reset_vector.S 源码
 
 .. code-block:: asm
@@ -204,7 +206,7 @@ prt_reset_vector.S 源码
 
     L10-L11 禁用了Debug、SError、IRQ和FIQ，因为中断处理尚未设置，详细参见 :doc:`../lab4/index`
 
-    L10 中的 DAIF 是 AArch64 架构的系统寄存器，完整的寄存器列表可参考 Arm 官网的 `AArch64 System Registers <https://developer.arm.com/documentation/ddi0595/2021-12/AArch64-Registers>`_ 页面。
+    L10 中的 DAIF 是 AArch64 架构的系统寄存器，完整的寄存器列表可参考 Arm 官网的 `AArch64 System Registers <https://developer.arm.com/documentation/ddi0601/latest/?lang=en>`_ 页面。
 
     L13-L14 进入死循环。
 
@@ -541,12 +543,15 @@ lab1 作业
 作业1
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+作业2
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 商业操作系统都有复杂的构建系统，试简要分析 UniProton 的构建系统。
 
 .. hint::
     UniProton 通过在根目录下执行 python build.py m4 （m4是指目标平台，还有如hi3093等）进行构建，所以构建系统的分析可从 build.py 入手进行。
 
-作业2
+作业3
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 学习如何调试项目。
