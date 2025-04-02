@@ -154,7 +154,7 @@ start.S 源码
         
     Start:
         LDR    x1, =__os_sys_sp_end // 符号在ld文件中定义
-        BIC    sp, x1, #0xf // 设置栈指针
+        BIC    sp, x1, #0xf // 设置栈指针, BIC: bit clear
 
         B      OsEnterMain
 
