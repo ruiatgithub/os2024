@@ -77,7 +77,7 @@ Mac 可通过 brew install cmake 或从官网的 `Get the Software <https://cmak
 
 由于我们的目标是编写一个操作系统，所以我们需要创建一个独立于操作系统的可执行程序，又称 独立式可执行程序（freestanding executable） 或 裸机程序（bare-metal executable） 。这意味着所有依赖于操作系统的库我们都不能使用。比如 std 中的大部分内容（io, thread, file system, etc.）都需要操作系统的支持，所以这部分内容我们不能使用。
 
-但是，不依赖与操作系统的语言特性还是可以继续使用的。
+但是，不依赖于操作系统的语言特性还是可以继续使用的。
 
 创建项目
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
