@@ -295,6 +295,7 @@ GICv2初始化
 新建 src/bsp/timer.c 文件，对定时器和对应的中断进行配置
 
 .. code-block:: c
+    :linenos:
 
     #include "prt_typedef.h"
     #include "prt_config.h"
