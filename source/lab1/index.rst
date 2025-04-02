@@ -122,7 +122,7 @@ main.c源码
 .. note::
 	S32 是在 prt_typedef.h 中定义的基本类型，这是为了屏蔽各硬件系统的区别，方便操作系统移植到多种不同规格的硬件上。
 
-	main 函数的主要功能（L12-L13）是把 out_str 中的字符通过宏 UART_REG_WRITE 逐个写入地址为 0x9000000 的地方。其作用将在 :doc:`../lab2/index` 部分详细解释。
+	main 函数的主要功能（L11-L12）是把 out_str 中的字符通过宏 UART_REG_WRITE 逐个写入地址为 0x9000000 的地方。其作用将在 :doc:`../lab2/index` 部分详细解释。
 
 在src/include/下创建prt_typedef.h。 `此处 <../\_static/prt_typedef.h>`_ 下载 prt_typedef.h
 
