@@ -171,13 +171,13 @@ start.S 源码
 
     L11-L15 检测当前CPU的 Exception Level 是否为 EL1 （将在 :doc:`../lab4/index` 部分详细解释），如果是 EL1 则通过 L15 的 BEQ Start 跳转到标号Start(L20)处开始执行，否则执行 L17 开始的指令，它和 L18 一起构成死循环。
 
-    L11 中的 CurrentEL 是 AArch64 架构的系统寄存器。这些寄存器不能直接操作，需要通过 MRS 指令（把系统寄存器的值读入到通用寄存器）或 MSR 指令（把通用寄存器的值写入到系统寄存器）借助通用寄存器来访问。完整的寄存器列表可参考 Arm 官网的 `AArch64 System Registers <https://developer.arm.com/documentation/ddi0595/2021-12/AArch64-Registers>`_ 页面。
+    L11 中的 CurrentEL 是 AArch64 架构的系统寄存器。这些寄存器不能直接操作，需要通过 MRS 指令（把系统寄存器的值读入到通用寄存器）或 MSR 指令（把通用寄存器的值写入到系统寄存器）借助通用寄存器来访问。
 
     L21-L22 用链接文件定义的地址初始化栈指针 sp，然后 L24 跳转到 prt_reset_vector.S 的 L7 行 OsEnterMain 处开始执行。
 
 .. tip:: mrs类指令阅读技巧： MRS（Move to Register from System register）
 
-.. tip:: 寄存器的相关描述可访问`AArch64 System Registers <https://developer.arm.com/documentation/ddi0601/latest/?lang=en>`_ 查看
+.. tip:: 完整的寄存器列表及相关描述可访问 `AArch64 System Registers <https://developer.arm.com/documentation/ddi0601/latest/?lang=en>`_ 查看，指令集在 `A64 Instruction Set Architecture <https://developer.arm.com/documentation/ddi0602/latest/?lang=en>`_ 查看。
 
 prt_reset_vector.S 源码
 
@@ -542,6 +542,7 @@ lab1 作业
 
 作业1
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+请通过 NZCV 寄存器获取 start.S 中执行 `CMP w6, w2` 前后 NZCV 寄存器的变化。
 
 作业2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
