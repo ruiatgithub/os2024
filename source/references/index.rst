@@ -11,6 +11,7 @@
 执行gdb时报错
 
 .. code-block:: console
+    
     root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# ../../aarch64-none-elf/bin/aarch64-none-elf-gdb build/miniEuler
     ../../aarch64-none-elf/bin/aarch64-none-elf-gdb: error while loading shared libraries: libncursesw.so.5: cannot open shared object file: No such file or directory
     root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# apt-get install libncursesw5
