@@ -8,13 +8,14 @@
 - CMake 的命令和参数等可参考 `官网文档 <https://cmake.org/cmake/help/latest/index.html>`_。此外，这里还有一个很好的入门 `博客文章 <https://zhuanlan.zhihu.com/p/500002865>`_。
 
 
-执行gdb时出错
+执行gdb时报错
 
-root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# ../../aarch64-none-elf/bin/aarch64-none-elf-gdb build/miniEuler
-../../aarch64-none-elf/bin/aarch64-none-elf-gdb: error while loading shared libraries: libncursesw.so.5: cannot open shared object file: No such file or directory
-root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# apt-get install libncursesw5
+.. code-block:: console
+    root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# ../../aarch64-none-elf/bin/aarch64-none-elf-gdb build/miniEuler
+    ../../aarch64-none-elf/bin/aarch64-none-elf-gdb: error while loading shared libraries: libncursesw.so.5: cannot open shared object file: No such file or directory
+    root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# apt-get install libncursesw5
 
-root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# ../../aarch64-none-elf/bin/aarch64-none-elf-gdb build/miniEuler
-../../aarch64-none-elf/bin/aarch64-none-elf-gdb: error while loading shared libraries: libpython3.6m.so.1.0: cannot open shared object file: No such file or directory
-root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/anaconda3/lib/
-root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# ../../aarch64-none-elf/bin/aarch64-none-elf-gdb build/miniEuler
+    root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# ../../aarch64-none-elf/bin/aarch64-none-elf-gdb build/miniEuler
+    ../../aarch64-none-elf/bin/aarch64-none-elf-gdb: error while loading shared libraries: libpython3.6m.so.1.0: cannot open shared object file: No such file or directory
+    root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/anaconda3/lib/
+    root@e1370b14f32a:~/netdisk/os2024_exp/os2024_exp_redo/lab4# ../../aarch64-none-elf/bin/aarch64-none-elf-gdb build/miniEuler
