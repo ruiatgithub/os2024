@@ -247,7 +247,10 @@ print函数是学习几乎任何一种软件开发语言时最先学习使用的
     int TryPrintf(const char *format, va_list vaList)
     {
         int len;
-        char buff[OS_MAX_SHOW_LEN] = {0};
+        char buff[OS_MAX_SHOW_LEN];
+        for(int i = 0; i < OS_MAX_SHOW_LEN; i++) {
+            buff[i] = 0;
+        }
         char *str = buff;
         
         len = vsnprintf_s(buff, OS_MAX_SHOW_LEN, OS_MAX_SHOW_LEN, format, vaList);
