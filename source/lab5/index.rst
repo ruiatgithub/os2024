@@ -246,7 +246,7 @@ GICv2初始化
 
 在 hwi_init.c 中 OsHwiInit 函数实现 GIC 的初始化，此外还提供了其他函数实现开关指定中断、设置中断属性、确认中断和标记中断完成等功能。
 
-.. attention:: 你需要参照 OsGicIntSetPriority 等函数实现 OsGicEnableInt 和 OsGicClearInt 函数。
+.. attention:: 你需要参照 OsGicIntSetPriority 等函数实现 OsGicEnableInt 和 OsGicDisableInt 函数。
 
 
 
@@ -625,7 +625,7 @@ lab5 作业
 作业1 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-实现 hwi_init.c 中缺失的 OsGicEnableInt 和 OsGicClearInt 函数。
+实现 hwi_init.c 中缺失的 OsGicEnableInt 和 OsGicDisableInt 函数。
 
 .. 作业2 
 .. ^^^^^^^^^^^^^^^^^^^^^^^^^^^
