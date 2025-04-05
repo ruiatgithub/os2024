@@ -126,9 +126,9 @@ GICv2初始化
     #define GICC_PMR                   (GIC_CPU_BASE  + 0x0004U)
     #define GICC_BPR                   (GIC_CPU_BASE  + 0x0008U)
     #define IAR_MASK        0x3FFU
-    #define GICC_IAR		(GIC_CPU_BASE + 0xc)
-    #define GICC_EOIR		(GIC_CPU_BASE + 0x10)
-    #define	GICD_SGIR		(GIC_DIST_BASE + 0xf00)
+    #define GICC_IAR            (GIC_CPU_BASE + 0xc)
+    #define GICC_EOIR           (GIC_CPU_BASE + 0x10)
+    #define     GICD_SGIR               (GIC_DIST_BASE + 0xf00)
 
     #define BIT(n)                     (1 << (n))
 
@@ -145,7 +145,7 @@ GICv2初始化
     #define GICC_CTLR_BYPASS_MASK      (GICC_CTLR_FIQBYPDISGRP0 | \
                                         GICC_CTLR_IRQBYPDISGRP0 | \
                                         GICC_CTLR_FIQBYPDISGRP1 | \
-                                        GICC_CTLR_IRQBYPDISGRP1)    
+                                        GICC_CTLR_IRQBYPDISGRP1)
 
     #define GICC_CTLR_ENABLE            1
     #define GICC_CTLR_DISABLE           0
@@ -159,22 +159,6 @@ GICv2初始化
     #define GIC_REG_READ(addr)         (*(volatile U32 *)((uintptr_t)(addr)))
     #define GIC_REG_WRITE(addr, data)  (*(volatile U32 *)((uintptr_t)(addr)) = (U32)(data))
 
-
-    void OsGicInitCpuInterface(void)
-    {
-        // 初始化Gicv2的distributor和cpu interface
-        // 禁用distributor和cpu interface后进行相应配置
-        GIC_REG_WRITE(GICD_CTLR, GICD_CTLR_DISABLE);
-        GIC_REG_WRITE(GICC_CTLR, GICC_CTLR_DISABLE);
-        GIC_REG_WRITE(GICC_PMR, GICC_PMR_PRIO_LOW);
-        GIC_REG_WRITE(GICC_BPR, GICC_BPR_NO_GROUP);
-
-
-        // 启用distributor和cpu interface
-        GIC_REG_WRITE(GICD_CTLR, GICD_CTLR_ENABLE);
-        GIC_REG_WRITE(GICC_CTLR, GICC_CTLR_ENABLE);
-
-    }
 
     // src/arch/drv/gic/prt_gic_init.c
     /*
@@ -190,11 +174,12 @@ GICv2初始化
     */
     OS_SEC_L4_TEXT void OsGicEnableInt(U32 intId)
     {
-        // Interrupt Set-Enable Registers    
+        // Interrupt Set-Enable Registers
     }
 
-    OS_SEC_L4_TEXT void OsGicClearInt(uint32_t interrupt) 
+    OS_SEC_L4_TEXT void OsGicClearIntPending(uint32_t interrupt)
     {
+        // Interrupt Clear-Pending state of an interruptRegisters    
         GIC_REG_WRITE(GICD_ICPENDRn + (interrupt / GICD_ICPENDR_SIZE)*sizeof(U32), 1 << (interrupt % GICD_ICPENDR_SIZE));
     }
 
@@ -243,7 +228,17 @@ GICv2初始化
     U32 OsHwiInit(void)
     {
 
-        OsGicInitCpuInterface();
+        // 初始化Gicv2的distributor和cpu interface
+        // 禁用distributor和cpu interface后进行相应配置
+        GIC_REG_WRITE(GICD_CTLR, GICD_CTLR_DISABLE);
+        GIC_REG_WRITE(GICC_CTLR, GICC_CTLR_DISABLE);
+        GIC_REG_WRITE(GICC_PMR, GICC_PMR_PRIO_LOW);
+        GIC_REG_WRITE(GICC_BPR, GICC_BPR_NO_GROUP);
+
+
+        // 启用distributor和cpu interface
+        GIC_REG_WRITE(GICD_CTLR, GICD_CTLR_ENABLE);
+        GIC_REG_WRITE(GICC_CTLR, GICC_CTLR_ENABLE);
 
         return OS_OK;
     }
@@ -305,14 +300,14 @@ GICv2初始化
     extern void OsGicIntSetConfig(uint32_t interrupt, uint32_t config);
     extern void OsGicIntSetPriority(uint32_t interrupt, uint32_t priority);
     extern void OsGicEnableInt(U32 intId);
-    extern void OsGicClearInt(uint32_t interrupt);
+    extern void OsGicClearIntPending(uint32_t interrupt);
 
     void CoreTimerInit(void)
     {
         // 配置中断控制器
         OsGicIntSetConfig(30, 0); // 配置为电平触发
         OsGicIntSetPriority(30, 0); // 优先级为0
-        OsGicClearInt(30); // 清除中断
+        OsGicClearIntPending(30); // 清除中断
         OsGicEnableInt(30); // 启用中断
 
         // 配置定时器
