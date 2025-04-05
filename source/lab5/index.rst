@@ -177,9 +177,10 @@ GICv2初始化
         // Interrupt Set-Enable Registers
     }
 
+    // 直接清除中断的pending状态
     OS_SEC_L4_TEXT void OsGicClearIntPending(uint32_t interrupt)
     {
-        // Interrupt Clear-Pending state of an interruptRegisters    
+        // Interrupt Clear-Pending state of an interrupt Registers    
         GIC_REG_WRITE(GICD_ICPENDRn + (interrupt / GICD_ICPENDR_SIZE)*sizeof(U32), 1 << (interrupt % GICD_ICPENDR_SIZE));
     }
 
@@ -307,7 +308,7 @@ GICv2初始化
         // 配置中断控制器
         OsGicIntSetConfig(30, 0); // 配置为电平触发
         OsGicIntSetPriority(30, 0); // 优先级为0
-        OsGicClearIntPending(30); // 清除中断
+        OsGicClearIntPending(30); // 清除中断pending
         OsGicEnableInt(30); // 启用中断
 
         // 配置定时器
