@@ -2,6 +2,7 @@
 =====================
 
 - 交叉工具链可以从Arm官网的 `GNU Toolchain Downloads <https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads>`_ 页面下载。
+- Arm官网的AArch64基础文档： `AArch64基础 <https://www.arm.com/architecture/learn-the-architecture/a-profile>`_。
 - 完整的寄存器列表可参考 Arm 官网的 `AArch64 System Registers <https://developer.arm.com/documentation/ddi0601/latest/?lang=en>`_ 页面。
 - 完整的指令集可参考 Arm 官网的 `Arm A-profile A64 Instruction Set Architecture <https://developer.arm.com/documentation/ddi0602/latest/?lang=en>`_ 页面。
 - 详情可参考 `The GNU linker <https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_mono/ld.html>`_。此外，这里还有一个简单的 `链接脚本基本介绍 <https://zhuanlan.zhihu.com/p/363308789>`_ 可参考。
