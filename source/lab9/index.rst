@@ -64,7 +64,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
     extern void OsGicIntSetConfig(uint32_t interrupt, uint32_t config);
     extern void OsGicIntSetPriority(uint32_t interrupt, uint32_t priority);
     extern void OsGicEnableInt(U32 intId);
-    extern void OsGicClearInt(uint32_t interrupt);
+    extern void OsGicClearIntPending(uint32_t interrupt);
     extern U32 PRT_Printf(const char *format, ...);
     U32 PRT_UartInit(void)
     {
@@ -88,7 +88,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
         // 启用UART 接收中断
         OsGicIntSetConfig(33, 0); //可省略
         OsGicIntSetPriority(33, 0);
-        OsGicClearInt(33); //可省略
+        OsGicClearIntPending(33); //可省略
         OsGicEnableInt(33);
 
         // 创建uart数据接收信号量
