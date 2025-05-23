@@ -200,6 +200,7 @@ shell 处理
     #include "os_attr_armv8_external.h"
     #include "prt_task.h"
     #include "prt_sem.h"
+    #include <string.h>
 
     extern SemHandle sem_uart_rx;
     extern U32 PRT_Printf(const char *format, ...);
@@ -223,28 +224,85 @@ shell 处理
                 cmd[i] = 0;
             }
 
+            enum {NORMAL, ESC, BRACKET} state = NORMAL;  // 状态机
             while (1){
                 PRT_SemPend(sem_uart_rx, OS_WAIT_FOREVER);
-                
+
                 // 读取shellCB缓冲区的字符
                 ch = shellCB->shellBuf[shellCB->shellBufReadOffset];
-                cmd[idx] = ch;
-                idx++;
                 shellCB->shellBufReadOffset++;
                 if(shellCB->shellBufReadOffset == SHELL_SHOW_MAX_LEN)
                     shellCB->shellBufReadOffset = 0;
-
-                PRT_Printf("%c", ch); //回显
+                // 状态机处理转义序列
+                switch(state) {
+                    case NORMAL:
+                        if (ch == '\033') {
+                            state = ESC;
+                            continue;
+                        }
+                        break;
+                    case ESC:
+                        if (ch == '[') {
+                            state = BRACKET;
+                            continue;
+                        }
+                        state = NORMAL;
+                        break;
+                    case BRACKET:
+                        state = NORMAL;
+                        // 处理箭头键
+                        switch(ch) {
+                            case 'D':  // 左箭头
+                                if (idx > 0) {
+                                    idx--;
+                                    PRT_Printf("\033[D");  // 光标左移
+                                }
+                                continue;
+                            case 'C':  // 右箭头
+                                if (idx < strlen(cmd)) {
+                                    idx++;
+                                    PRT_Printf("\033[C");  // 光标右移
+                                }
+                                continue;
+                        }
+                        continue;
+                }
+                // 检查退格键
+                if (ch == 0x7F || ch == '\b') {
+                    if (idx > 0) {
+                        memmove(&cmd[idx-1], &cmd[idx], strlen(cmd) - idx);
+                        cmd[strlen(cmd)-1] = '\0';
+                        idx--;
+                        PRT_Printf("\b\033[K");  // 删除当前行从光标位置到行尾
+                        PRT_Printf("%s", &cmd[idx]);  // 重绘剩余字符
+                        
+                        if (strlen(cmd) > idx)
+                            PRT_Printf("\033[%dD", strlen(cmd) - idx);  // 光标复位
+                    }
+                    continue;
+                }
                 if (ch == '\r'){
-                    // PRT_Printf("\n");
-                    if(cmd[0]=='t' && cmd[1]=='o' && cmd[2]=='p'){
+                    PRT_Printf("\n%s", cmd);
+                    // 使用strcmp代替逐个字符比较
+                    if (strcmp(cmd, "top") == 0) {
                         OsDisplayTasksInfo();
-                    } else if(cmd[0]=='t' && cmd[1]=='i' && cmd[2]=='c' && cmd[3]=='k'){
+                    } else if (strcmp(cmd, "tick") == 0) {
                         OsDisplayCurTick();
                     }
                     break;
                 }
-                    
+                if (idx >= SHELL_SHOW_MAX_LEN - 1) continue;
+                memmove(&cmd[idx+1], &cmd[idx], strlen(cmd) - idx + 1);
+                cmd[idx] = ch;
+                PRT_Printf("%s", &cmd[idx]);  // 重绘剩余字符
+                idx++;
+                if (strlen(cmd) > idx) {
+                    PRT_Printf("\033[%dD", (int)(strlen(cmd) - idx));  // 使用ANSI转义序列
+                }
+            }
+            if (strcmp(cmd, "quit") == 0) {
+                PRT_Printf("\n");
+                break;
             }
         }
     }
