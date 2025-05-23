@@ -282,7 +282,7 @@ shell 处理
                     continue;
                 }
                 if (ch == '\r'){
-                    PRT_Printf("\n%s", cmd);
+                    // PRT_Printf("\n%s", cmd); // 检查行编辑功能是否正确
                     // 使用strcmp代替逐个字符比较
                     if (strcmp(cmd, "top") == 0) {
                         OsDisplayTasksInfo();
