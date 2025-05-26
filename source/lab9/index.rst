@@ -283,6 +283,7 @@ shell 处理
                 }
                 if (ch == '\r'){
                     // PRT_Printf("\n%s", cmd); // 检查行编辑功能是否正确
+                    PRT_Printf("\n");
                     // 使用strcmp代替逐个字符比较
                     if (strcmp(cmd, "top") == 0) {
                         OsDisplayTasksInfo();
@@ -333,9 +334,88 @@ shell 处理
     }
 
 
+中断处理调整
+--------------------------
+由于在处理接收中断函数中调用了PRT_SemPost(sem_uart_rx)，然后调用了PRT_SemPost()--OsTskScheduleFastPs(intSave)--OsTaskTrapFastPs(intSave)--OsTaskTrap()。
+然而在OsTaskTrap()中，我们首先通过任务控制块获取了旧任务栈指针，重新保存了上下文，然后将新的栈指针写回任务控制块，最后调用OsMainSchedule()进行调度。
+但是中断触发的时候，上下文应该由EXC_HANDLE宏保存，因此在中断切换任务时不应该调用OsTaskTrap()重复保存上下文，只需要更新旧任务栈指针即可。
 
+在src/bsp/prt_vector.S加入以下代码，专门用来处理中断中的任务调度。
 
+.. code-block:: c
+    :linenos:
 
+    /*
+    * 中断时的调度函数
+    */
+        .globl OsTaskSwitchFromIrq
+        .type OsTaskSwitchFromIrq, @function
+        .align 4
+    OsTaskSwitchFromIrq:
+        LDR    x1, =g_runningTask
+        LDR    x0, [x1]           // x0 = &g_runningTask->sp
+        // 复用 EXC_HANDLE 保存的 x0-x30，无需补充 elr/spsr
+
+        // 更新旧任务栈指针
+        mov    x1, sp
+        str    x1, [x0]
+
+        B      OsMainSchedule
+
+在OsTskScheduleFastPs(intSave)中有这样一段代码：
+
+.. code-block:: c
+    :linenos:
+
+    #define OS_INT_ACTIVE_MASK \
+    (OS_FLG_HWI_ACTIVE | OS_FLG_TICK_ACTIVE | OS_FLG_SYS_ACTIVE | OS_FLG_EXC_ACTIVE)
+    #define OS_INT_ACTIVE ((UNI_FLAG & OS_INT_ACTIVE_MASK) != 0)
+    #define OS_INT_INACTIVE (!(OS_INT_ACTIVE))
+
+    ......
+
+    /* In case that running is not highest then reschedule */
+    if ((g_highestTask != RUNNING_TASK) && (g_uniTaskLock == 0)) {
+        UNI_FLAG |= OS_FLG_TSK_REQ;
+
+        /* only if there is not HWI or TICK the trap */
+        if (OS_INT_INACTIVE) {
+            OsTaskTrapFastPs(intSave);
+        }
+    }
+
+其中OS_INT_INACTIVE与UNI_FLAG有关，但是我们从来没有设置过UNI_FLAG。
+因此需要在src/bsp/prt_exc.c的OsHwiDispatch()中添加UNI_FLAG相关操作，这样在中断处理过程中调用OsTskScheduleFastPs时只会设置OS_FLG_TSK_REQ标志代表有调度请求，而不会进入OsTaskTrapFastPs(intSave)立刻开始调度。
+在中断结束后调用OsTaskSwitchFromIrq()更新旧任务控制块栈指针，随后进入OsMainSchedule()进行调度。
+
+.. code-block:: c
+    :linenos:
+
+    extern  U32 OsGicIntAcknowledge(void);
+    extern void OsGicIntClear(U32 value);
+    extern void OsTaskSwitchFromIrq();
+    // src/arch/cpu/armv8/common/hwi/prt_hwi.c  OsHwiDispatch(),OsHwiDispatchHandle()
+    /*
+    * 描述: 中断处理入口, 调用处外部已关中断
+    */
+    OS_SEC_L0_TEXT void OsHwiDispatch( U32 excType, struct ExcRegInfo *excRegs) //src/arch/cpu/armv8/common/hwi/prt_hwi.c
+    {
+        UNI_FLAG |= OS_FLG_HWI_ACTIVE;  // 设置硬中断标志
+        // 中断确认，相当于OsHwiNumGet()
+        U32 value = OsGicIntAcknowledge();
+        U32 irq_num = value & 0x1ff;
+        U32 core_num = value & 0xe00;
+
+        OsHwiHandleActive(irq_num);
+
+        // 清除中断，相当于 OsHwiClear(hwiNum);
+        OsGicIntClear(irq_num|core_num);
+        UNI_FLAG &= ~OS_FLG_HWI_ACTIVE;  // 清除硬中断标志
+        
+        if (UNI_FLAG & OS_FLG_TSK_REQ) {
+            OsTaskSwitchFromIrq();
+        }
+    }
 
 
 .. hint:: 将新增文件加入构建系统
