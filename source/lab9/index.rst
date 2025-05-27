@@ -165,13 +165,13 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
         struct TagTskCb *taskCb = NULL;
         U32 cnt = 0;
 
-        PRT_Printf("\nPID\t\tPriority\tStack Size\n");
+        PRT_Printf("PID\t\tPriority\tStack Size\n");
         // 遍历g_runQueue队列，查找优先级最高的任务
         LIST_FOR_EACH(taskCb, &g_runQueue, struct TagTskCb, pendList) {
             cnt++;
             PRT_Printf("%d\t\t%d\t\t%d\n", taskCb->taskPid, taskCb->priority, taskCb->stackSize);
         }
-        PRT_Printf("Total %d tasks", cnt);
+        PRT_Printf("Total %d tasks\n", cnt);
 
     }
 
@@ -183,7 +183,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
     extern U32 PRT_Printf(const char *format, ...);
     OS_SEC_TEXT void OsDisplayCurTick(void)
     {
-        PRT_Printf("\nCurrent Tick: %d", PRT_TickGetCount());
+        PRT_Printf("Current Tick: %d\n", PRT_TickGetCount());
     }
 
 
@@ -217,7 +217,7 @@ shell 处理
         ShellCB *shellCB = (ShellCB *)param1;
 
         while (1) {
-            PRT_Printf("\nminiEuler # ");
+            PRT_Printf("\033[1;92mminiEuler# \033[0m");
             idx = 0;
             for(int i = 0; i < SHELL_SHOW_MAX_LEN; i++)
             {
@@ -285,17 +285,24 @@ shell 处理
                     // PRT_Printf("\n%s", cmd); // 检查行编辑功能是否正确
                     PRT_Printf("\n");
                     // 使用strcmp代替逐个字符比较
-                    if (strcmp(cmd, "top") == 0) {
+                    if (strcmp(cmd, "help") == 0) {
+                        PRT_Printf("Available commands:\n");
+                        PRT_Printf("    top : print current task list.\n");
+                        PRT_Printf("    tick : print current tick.\n");
+                        PRT_Printf("    quit : exit shell.\n");
+                    } else if (strcmp(cmd, "top") == 0) {
                         OsDisplayTasksInfo();
                     } else if (strcmp(cmd, "tick") == 0) {
                         OsDisplayCurTick();
+                    }  else {
+                        PRT_Printf("\033[1;91m[error]\033[0m Invalid command. Type \"help\" for a list of available commands.\n");
                     }
                     break;
                 }
                 if (idx >= SHELL_SHOW_MAX_LEN - 1) continue;
                 memmove(&cmd[idx+1], &cmd[idx], strlen(cmd) - idx + 1);
                 cmd[idx] = ch;
-                PRT_Printf("%s", &cmd[idx]);  // 重绘剩余字符
+                PRT_Printf("\033[94m%s\033[0m", &cmd[idx]);  // 重绘剩余字符
                 idx++;
                 if (strlen(cmd) > idx) {
                     PRT_Printf("\033[%dD", (int)(strlen(cmd) - idx));  // 使用ANSI转义序列
