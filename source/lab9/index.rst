@@ -274,7 +274,7 @@ shell 处理
                         cmd[strlen(cmd)-1] = '\0';
                         idx--;
                         PRT_Printf("\b\033[K");  // 删除当前行从光标位置到行尾
-                        PRT_Printf("%s", &cmd[idx]);  // 重绘剩余字符
+                        PRT_Printf("\033[94m%s\033[0m", &cmd[idx]);  // 重绘剩余字符
                         
                         if (strlen(cmd) > idx)
                             PRT_Printf("\033[%dD", strlen(cmd) - idx);  // 光标复位
