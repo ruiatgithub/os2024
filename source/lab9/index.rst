@@ -64,7 +64,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
     extern void OsGicIntSetConfig(uint32_t interrupt, uint32_t config);
     extern void OsGicIntSetPriority(uint32_t interrupt, uint32_t priority);
     extern void OsGicEnableInt(U32 intId);
-    extern void OsGicClearInt(uint32_t interrupt);
+    extern void OsGicClearIntPending(uint32_t interrupt);
     extern U32 PRT_Printf(const char *format, ...);
     U32 PRT_UartInit(void)
     {
@@ -88,7 +88,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
         // 启用UART 接收中断
         OsGicIntSetConfig(33, 0); //可省略
         OsGicIntSetPriority(33, 0);
-        OsGicClearInt(33); //可省略
+        OsGicClearIntPending(33); //可省略
         OsGicEnableInt(33);
 
         // 创建uart数据接收信号量
@@ -165,13 +165,13 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
         struct TagTskCb *taskCb = NULL;
         U32 cnt = 0;
 
-        PRT_Printf("\nPID\t\tPriority\tStack Size\n");
+        PRT_Printf("PID\t\tPriority\tStack Size\n");
         // 遍历g_runQueue队列，查找优先级最高的任务
         LIST_FOR_EACH(taskCb, &g_runQueue, struct TagTskCb, pendList) {
             cnt++;
             PRT_Printf("%d\t\t%d\t\t%d\n", taskCb->taskPid, taskCb->priority, taskCb->stackSize);
         }
-        PRT_Printf("Total %d tasks", cnt);
+        PRT_Printf("Total %d tasks\n", cnt);
 
     }
 
@@ -183,7 +183,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
     extern U32 PRT_Printf(const char *format, ...);
     OS_SEC_TEXT void OsDisplayCurTick(void)
     {
-        PRT_Printf("\nCurrent Tick: %d", PRT_TickGetCount());
+        PRT_Printf("Current Tick: %d\n", PRT_TickGetCount());
     }
 
 
@@ -200,6 +200,7 @@ shell 处理
     #include "os_attr_armv8_external.h"
     #include "prt_task.h"
     #include "prt_sem.h"
+    #include <string.h>
 
     extern SemHandle sem_uart_rx;
     extern U32 PRT_Printf(const char *format, ...);
@@ -216,35 +217,100 @@ shell 处理
         ShellCB *shellCB = (ShellCB *)param1;
 
         while (1) {
-            PRT_Printf("\nminiEuler # ");
+            PRT_Printf("\033[1;92mminiEuler# \033[0m");
             idx = 0;
             for(int i = 0; i < SHELL_SHOW_MAX_LEN; i++)
             {
                 cmd[i] = 0;
             }
 
+            enum {NORMAL, ESC, BRACKET} state = NORMAL;  // 状态机
             while (1){
                 PRT_SemPend(sem_uart_rx, OS_WAIT_FOREVER);
-                
+
                 // 读取shellCB缓冲区的字符
                 ch = shellCB->shellBuf[shellCB->shellBufReadOffset];
-                cmd[idx] = ch;
-                idx++;
                 shellCB->shellBufReadOffset++;
                 if(shellCB->shellBufReadOffset == SHELL_SHOW_MAX_LEN)
                     shellCB->shellBufReadOffset = 0;
-
-                PRT_Printf("%c", ch); //回显
+                // 状态机处理转义序列
+                switch(state) {
+                    case NORMAL:
+                        if (ch == '\033') {
+                            state = ESC;
+                            continue;
+                        }
+                        break;
+                    case ESC:
+                        if (ch == '[') {
+                            state = BRACKET;
+                            continue;
+                        }
+                        state = NORMAL;
+                        break;
+                    case BRACKET:
+                        state = NORMAL;
+                        // 处理箭头键
+                        switch(ch) {
+                            case 'D':  // 左箭头
+                                if (idx > 0) {
+                                    idx--;
+                                    PRT_Printf("\033[D");  // 光标左移
+                                }
+                                continue;
+                            case 'C':  // 右箭头
+                                if (idx < strlen(cmd)) {
+                                    idx++;
+                                    PRT_Printf("\033[C");  // 光标右移
+                                }
+                                continue;
+                        }
+                        continue;
+                }
+                // 检查退格键
+                if (ch == 0x7F || ch == '\b') {
+                    if (idx > 0) {
+                        memmove(&cmd[idx-1], &cmd[idx], strlen(cmd) - idx);
+                        cmd[strlen(cmd)-1] = '\0';
+                        idx--;
+                        PRT_Printf("\b\033[K");  // 删除当前行从光标位置到行尾
+                        PRT_Printf("\033[94m%s\033[0m", &cmd[idx]);  // 重绘剩余字符
+                        
+                        if (strlen(cmd) > idx)
+                            PRT_Printf("\033[%dD", strlen(cmd) - idx);  // 光标复位
+                    }
+                    continue;
+                }
                 if (ch == '\r'){
-                    // PRT_Printf("\n");
-                    if(cmd[0]=='t' && cmd[1]=='o' && cmd[2]=='p'){
+                    // PRT_Printf("\n%s", cmd); // 检查行编辑功能是否正确
+                    PRT_Printf("\n");
+                    // 使用strcmp代替逐个字符比较
+                    if (strcmp(cmd, "help") == 0) {
+                        PRT_Printf("Available commands:\n");
+                        PRT_Printf("    top : print current task list.\n");
+                        PRT_Printf("    tick : print current tick.\n");
+                        PRT_Printf("    quit : exit shell.\n");
+                    } else if (strcmp(cmd, "top") == 0) {
                         OsDisplayTasksInfo();
-                    } else if(cmd[0]=='t' && cmd[1]=='i' && cmd[2]=='c' && cmd[3]=='k'){
+                    } else if (strcmp(cmd, "tick") == 0) {
                         OsDisplayCurTick();
+                    }  else {
+                        PRT_Printf("\033[1;91m[error]\033[0m Invalid command. Type \"help\" for a list of available commands.\n");
                     }
                     break;
                 }
-                    
+                if (idx >= SHELL_SHOW_MAX_LEN - 1) continue;
+                memmove(&cmd[idx+1], &cmd[idx], strlen(cmd) - idx + 1);
+                cmd[idx] = ch;
+                PRT_Printf("\033[94m%s\033[0m", &cmd[idx]);  // 重绘剩余字符
+                idx++;
+                if (strlen(cmd) > idx) {
+                    PRT_Printf("\033[%dD", (int)(strlen(cmd) - idx));  // 使用ANSI转义序列
+                }
+            }
+            if (strcmp(cmd, "quit") == 0) {
+                PRT_Printf("\n");
+                break;
             }
         }
     }
@@ -275,9 +341,88 @@ shell 处理
     }
 
 
+中断处理调整
+--------------------------
+由于在处理接收中断函数中调用了PRT_SemPost(sem_uart_rx)，然后调用了PRT_SemPost()--OsTskScheduleFastPs(intSave)--OsTaskTrapFastPs(intSave)--OsTaskTrap()。
+然而在OsTaskTrap()中，我们首先通过任务控制块获取了旧任务栈指针，重新保存了上下文，然后将新的栈指针写回任务控制块，最后调用OsMainSchedule()进行调度。
+但是中断触发的时候，上下文应该由EXC_HANDLE宏保存，因此在中断切换任务时不应该调用OsTaskTrap()重复保存上下文，只需要更新旧任务栈指针即可。
 
+在src/bsp/prt_vector.S加入以下代码，专门用来处理中断中的任务调度。
 
+.. code-block:: c
+    :linenos:
 
+    /*
+    * 中断时的调度函数
+    */
+        .globl OsTaskSwitchFromIrq
+        .type OsTaskSwitchFromIrq, @function
+        .align 4
+    OsTaskSwitchFromIrq:
+        LDR    x1, =g_runningTask
+        LDR    x0, [x1]           // x0 = &g_runningTask->sp
+        // 复用 EXC_HANDLE 保存的 x0-x30，无需补充 elr/spsr
+
+        // 更新旧任务栈指针
+        mov    x1, sp
+        str    x1, [x0]
+
+        B      OsMainSchedule
+
+在OsTskScheduleFastPs(intSave)中有这样一段代码：
+
+.. code-block:: c
+    :linenos:
+
+    #define OS_INT_ACTIVE_MASK \
+    (OS_FLG_HWI_ACTIVE | OS_FLG_TICK_ACTIVE | OS_FLG_SYS_ACTIVE | OS_FLG_EXC_ACTIVE)
+    #define OS_INT_ACTIVE ((UNI_FLAG & OS_INT_ACTIVE_MASK) != 0)
+    #define OS_INT_INACTIVE (!(OS_INT_ACTIVE))
+
+    ......
+
+    /* In case that running is not highest then reschedule */
+    if ((g_highestTask != RUNNING_TASK) && (g_uniTaskLock == 0)) {
+        UNI_FLAG |= OS_FLG_TSK_REQ;
+
+        /* only if there is not HWI or TICK the trap */
+        if (OS_INT_INACTIVE) {
+            OsTaskTrapFastPs(intSave);
+        }
+    }
+
+其中OS_INT_INACTIVE与UNI_FLAG有关，但是我们从来没有设置过UNI_FLAG。
+因此需要在src/bsp/prt_exc.c的OsHwiDispatch()中添加UNI_FLAG相关操作，这样在中断处理过程中调用OsTskScheduleFastPs时只会设置OS_FLG_TSK_REQ标志代表有调度请求，而不会进入OsTaskTrapFastPs(intSave)立刻开始调度。
+在中断结束后调用OsTaskSwitchFromIrq()更新旧任务控制块栈指针，随后进入OsMainSchedule()进行调度。
+
+.. code-block:: c
+    :linenos:
+
+    extern  U32 OsGicIntAcknowledge(void);
+    extern void OsGicIntClear(U32 value);
+    extern void OsTaskSwitchFromIrq();
+    // src/arch/cpu/armv8/common/hwi/prt_hwi.c  OsHwiDispatch(),OsHwiDispatchHandle()
+    /*
+    * 描述: 中断处理入口, 调用处外部已关中断
+    */
+    OS_SEC_L0_TEXT void OsHwiDispatch( U32 excType, struct ExcRegInfo *excRegs) //src/arch/cpu/armv8/common/hwi/prt_hwi.c
+    {
+        UNI_FLAG |= OS_FLG_HWI_ACTIVE;  // 设置硬中断标志
+        // 中断确认，相当于OsHwiNumGet()
+        U32 value = OsGicIntAcknowledge();
+        U32 irq_num = value & 0x1ff;
+        U32 core_num = value & 0xe00;
+
+        OsHwiHandleActive(irq_num);
+
+        // 清除中断，相当于 OsHwiClear(hwiNum);
+        OsGicIntClear(irq_num|core_num);
+        UNI_FLAG &= ~OS_FLG_HWI_ACTIVE;  // 清除硬中断标志
+        
+        if (UNI_FLAG & OS_FLG_TSK_REQ) {
+            OsTaskSwitchFromIrq();
+        }
+    }
 
 
 .. hint:: 将新增文件加入构建系统

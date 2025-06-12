@@ -377,7 +377,9 @@ GICv2初始化
         {
             switch(irqNum){
                 case 30: 
+                    UNI_FLAG |= OS_FLG_TICK_ACTIVE;
                     OsTickDispatcher();
+                    UNI_FLAG &= ~OS_FLG_TICK_ACTIVE;
                     // PRT_Printf(".");
                     break;
                 default:
@@ -393,6 +395,7 @@ GICv2初始化
         */
         OS_SEC_L0_TEXT void OsHwiDispatch( U32 excType, struct ExcRegInfo *excRegs) //src/arch/cpu/armv8/common/hwi/prt_hwi.c
         {
+            UNI_FLAG |= OS_FLG_HWI_ACTIVE;  // 设置硬中断标志
             // 中断确认，相当于OsHwiNumGet()
             U32 value = OsGicIntAcknowledge();
             U32 irq_num = value & 0x1ff;
@@ -402,6 +405,7 @@ GICv2初始化
 
             // 清除中断，相当于 OsHwiClear(hwiNum);
             OsGicIntClear(irq_num|core_num);
+            UNI_FLAG &= ~OS_FLG_HWI_ACTIVE;  // 清除硬中断标志
         }
 
     src/bsp/os_attr_armv8_external.h 头文件可以在 `此处 <../\_static/os_attr_armv8_external.h>`_ 下载。 

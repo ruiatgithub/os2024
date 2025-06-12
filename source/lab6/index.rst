@@ -739,7 +739,7 @@ OsActivate 启动多任务系统。
 
         // 初始化为全0
         for(int i = 0; i < OS_MAX_TCB_NUM - 1; i++)
-            g_tskCbArray[i] = {0};
+            g_tskCbArray[i] = (struct TagTskCb){0}; // 此处应该强制转换，否则报错
 
         g_tskBaseId = 0;
 
