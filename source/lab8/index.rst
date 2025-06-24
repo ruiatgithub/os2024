@@ -2,28 +2,23 @@
 实验八 分页内存管理 
 =====================
 
+对内存管理单元MMU进行相关配置、设置页表，完成虚拟地址到物理地址的映射。
 
-Armv8的地址转换
+ARMv8地址翻译简略介绍
 ------------------------------
 
-`ARM Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Context-switching>`_ 中提到：For EL0 and EL1, there are two translation tables. TTBR0_EL1 provides translations for the bottom of Virtual Address space, which is typically application space and TTBR1_EL1 covers the top of Virtual Address space, typically kernel space. This split means that the OS mappings do not have to be replicated in the translation tables of each task. 即TTBR0指向整个虚拟空间下半部分通常用于应用程序的空间，TTBR1指向虚拟空间的上半部分通常用于内核的空间。其中TTBR0除了在EL1中存在外，也在EL2 and EL3中存在，但TTBR1只在EL1中存在。
-
-TTBR0_ELn 和 TTBR1_ELn 是页表基地址寄存器，地址转换的过程如下所示。
-
+TTBRx：页表基址寄存器。TTBR0指向整个虚拟空间下半部分，通常用于应用程序的空间。TTBR1指向虚拟空间的上半部分，通常用于内核的空间。
+下面以一个一级页表为例来进行地址转换过程。如下图所示，假设我们使用的页面64KB 的粒度（granule），并且虚拟地址是 42位。
 .. image:: v2p-translate.svg
-
-In a simple address translation involving only one level of look-up. It assumes we are using a 64KB granule with a 42-bit Virtual Address. The MMU translates a Virtual Address as follows:
-
-1. If VA[63:42] = 1 then TTBR1 is used for the base address for the first page table. When VA[63:42] = 0, TTBR0 is used for the base address for the first page table.
-2. The page table contains 8192 64-bit page table entries, and is indexed using VA[41:29]. The MMU reads the pertinent level 2 page table entry from the table.
-3. The MMU checks the page table entry for validity and whether or not the requested memory access is allowed. Assuming it is valid, the memory access is allowed.
-4. In the above Figure, the page table entry refers to a 512MB page (it is a block descriptor).
-5. Bits [47:29] are taken from this page table entry and form bits [47:29] of the Physical Address.
-6. Because we have a 512MB page, bits [28:0] of the VA are taken to form PA[28:0]. See Effect of granule sizes on translation tables
-7. The full PA[47:0] is returned, along with additional information from the page table entry.
-
-In practice, such a simple translation process severely limits how finely you can divide up your address space. Instead of using only this first-level translation table, a first-level table entry can also point to a second-level page table.
-
+.. role:: red
+    （注：图片来源 ARM Cortex-A Series Programmer’s Guide for ARMv8-A 文档中的 12.3 节，:red:`该文档随代码仓提供`）
+- 如果虚拟地址bit[63:42]都为1，则使用TTBR1作为第一级页目录表基地址，当bit[63:42]都为0时，使用TTBR0作为第一级页目录表基地址。
+- TTBRx指向一个二级页表，该页表中包含2^13=8192个页表项，使用虚拟地址的[41:29]作为索引。
+- MMU会检查页表项是否有效、是否可读，如果有效，则允许访问。
+- 在上图中，每个页表项指向的是一个 512MB 的大页。
+- MMU 会从该页表项中获取 Bits[47:29]，用于 :red:`构建物理地址（PA）的 Bits[47:29]`。
+- 由于我们使用的是一个 512MB 的大页，因此虚拟地址的 Bits[28:0] 会直接作为物理地址的 PA[28:0]。这和上面的 Bits[47:29] 两部分合并一起构成物理地址。
+更多信息希望读者能够自行查阅ARMv8的文档及相关资料。
 
 mmu管理
 ------------------------------
@@ -51,13 +46,13 @@ mmu管理
             .virt      = 0x0,
             .phys      = 0x0,
             .size      = 0x40000000, // 1G size
-            .max_level = 0x2,  // 不应大于3
+            .max_level = 0x2,  // 
             .attrs     = MMU_ATTR_DEVICE_NGNRNE | MMU_ACCESS_RWX, // 设备
         }, {
             .virt      = 0x40000000,
             .phys      = 0x40000000,
             .size      = 0x40000000, // 1G size
-            .max_level = 0x2, // // 不应大于3
+            .max_level = 0x2, // // 
             .attrs     = MMU_ATTR_CACHE_SHARE | MMU_ACCESS_RWX, // 内存
         }
     };
@@ -392,17 +387,53 @@ mmu管理
         return 0;
     }
 
+以上代码总体框架如下：
+mmu_init()
+├── mmu_setup()
+│   └── mmu_setup_pgtables() ──> 生成页表、建立映射
+│        └── mmu_add_map()
+│             └── mmu_find_pte() + mmu_add_map_pte_process()
+├── os_asm_invalidate_dcache_all() 等 —— 清空数据、指令缓存和所有tlb表项
+└── set_sctlr(get_sctlr() | CR_C | CR_M | CR_I) —— 启用 MMU 和 Cache
 
-新建 src/bsp/mmu.h， 该文件可从 `这里 <../\_static/mmu.h>`_ 下载
+我们从mmu_init 函数（L342-L358）开始进行分析。
+L346 调用 mmu_setup 函数（L322-L338）进行MMU的初始化，其主要通过：
+- L331 调用 mmu_setup_pgtables 函数（L273-L320）依据映射信息表 g_mem_map_info （L14-L28）设置页表 g_mmu_page_begin，采用4K页面大小，其中 :red:`g_mmu_page_begin在链接脚本aarch64-qemu.ld中定义`。
+    - L280-L302 依据配置计算tcr（Translation Control Register 参考： https://developer.arm.com/documentation/ddi0601/2025-03/AArch64-Registers/TCR-EL1--Translation-Control-Register--EL1-?lang=en ）的值，此外还通过mmu_get_tcr 函数（L33-L88）和 &g_mmu_ctrl.va_bits 返回恰当的虚拟地址位数；
+            - g_mmu_ctrl 是一个 mmu_ctrl_s 结构（L30），用于辅助MMU映射的配置，其结构在mmu.h中定义。比如用于计算新页表的存储位置等。
+    - L305 调用 mmu_create_table 函数（L153-L180）创建顶级页表；
+    - L310-L315 依据映射表 g_mem_map_info （L14-L28）加入页表项；
+    - L317 调用 mmu_set_ttbr_tcr_mair 函数（L261-L271）设置 ttbr0_el1、 tcr_el1 和 mair_el1 寄存器，分别对应页表基地址、MMU控制和内存属性控制。（注：寄存器参考 https://developer.arm.com/documentation/ddi0601/2025-03/AArch64-Registers?lang=en ）
+L351-L353 清空数据、指令缓存和所有tlb表项
+L355 设置 SCTLR_EL1寄存器（System Control Register） :red:`正式启用MMU和Cache`，（参考：https://developer.arm.com/documentation/ddi0601/2025-03/AArch64-Registers/SCTLR-EL1--System-Control-Register--EL1-?lang=en ）
+下面分别说明 mmu_create_table 函数（L153-L180）和 mmu_add_map 函数（L216-L259）
+- mmu_create_table 函数用于新建一个页表，主要包括：
+    - L156 首先获取新页表的存储位置为：g_mmu_ctrl.tlb_fillptr；
+    - L158-L162 计算本页表所需的长度；
+    - L165 由于本页表会占用空间，准备下一个新建页表的存放位置 g_mmu_ctrl.tlb_fillptr += pt_len;
+    - L173-L177 初始化本页表全部页表项为全0；
+    - L179 返回本新建页表的起始位置；
+- mmu_add_map 函数用于处理一个mmu_mmap_region_s 结构（如L14-L28 g_mem_map_info 结构中的其中一项，mmu_mmap_region_s结构在mmu.h中定义）所描述的MMU映射，主要包括：
+    - L228-L230 需确保待处理MMU映射项的（最大）页表级别大于整体系统地址映射的起始级别；
+    - L232-L256 循环处理将mmu_mmap_region_s结构描述的全部空间映射为页表项（Page Table Entry，PTE），如有需要还应建立下一级页表;
+            - L234 从系统起始级别开始一直处理到映射项设定的页表级别；
+            - L236 调用 mmu_find_pte 函数（L106-L150）找到虚拟地址virt对应级别页表的页表项pte；( :red:`注：这部分作为作业请大家自行分析``)
+            - L243 调用 mmu_add_map_pte_process 函数（L189-L213）填充页表项，主要包括：
+                - L194-L204 是中间级页表，如果下级页表未创建则应 :red:`新建页表并将此页表项指向下级页表`（L196-L204）；如果下级页表已存在，不需要执行任何操作；
+                - L205-L206 是Arm v8支持的最大的3级页表，直接 :red:`设定该页表项的值`为：phys | map->attrs | PTE_TYPE_PAGE; 
+                - L207-L210 是映射项设定的最大级页表，但还未到Arm v8支持的最大的3级页表，直接 :red:`设定该页表项的值`为：phys | map->attrs | PTE_TYPE_BLOCK;
+            - L248-L250 正常时会获取到最后一级页表项所表示的地址空间大小，其中 mmu_level2shift 函数（L96-L103）用于计算特定级别页表项所表示的地址空间大小的二进制位数。
+            - L253-L255 虚拟地址virt、物理地址phys和映射大小map_size均相应递增一页大小。
 
-新建 src/bsp/cache_asm.S， 该文件可从 `这里 <../\_static/cache_asm.S>`_ 下载
-
-
+总的来说，MMU的初始化可结合下图理解：
+.. image:: MMU-init.png
+MMU的配置首先以start_level开始，并将g_mmu_ctrl.tlb_fillptr指向在g_mmu_ctrl.tlb_addr处，在g_mmu_ctrl.tlb_fillptr建立一个顶级页表（g_mmu_ctrl.tlb_fillptr相应递增）。
+对于单个的mmu_mmap_region_s，首先分别设定一个值为virt和phy,初始化为虚拟地址和物理地址的起始地址，根据virt找到这个地址对应的级别的页表项(多级页表的寻址)，如果这个页表项不是最高级别，且没有指向下一级页表，则在g_mmu_ctrl.tlb_fillptr新建一个页表（g_mmu_ctrl.tlb_fillptr相应递增），并使这个页表项指向这个新建的下一级页表，直到最后一级页表已经被建立。然后接着对更新后的virt从初始级别的页表重复上述操作，直到一个mmap需要的空间映射已经被完全建立,即大小达到size。
 
 启用 mmu
 --------------------------
 
-start.S 中在 B      OsEnterMain 之前启用 MMU
+打开Start.S 在 B OsEnterMain 之前启用 MMU。
 
 .. code-block:: asm
     :linenos:
@@ -413,18 +444,26 @@ start.S 中在 B      OsEnterMain 之前启用 MMU
     B      OsEnterMain
 
 
-.. hint:: 将新增文件加入构建系统
+:red:`.. hint:: 将新增文件加入构建系统`
 
-.. hint:: 通过调试确保你真的启动了 MMU
+:red:`.. hint:: 通过调试确保你真的启动了 MMU`
 
-lab8 作业
+    在没有出错的情况下，系统应该正常运行并输出：
+    .. image:: result.png
+
+作业
 --------------------------
 
 作业1
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-启用 TTBR1 ，将地址映射到虚拟地址的高半部分，使用高地址访问串口
-修改后：（1）src/bsp/print.c中 
+请调试跟踪并详细解释mmu_find_pte 函数的处理过程。
+
+作业2
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+启用 TTBR1 ，将地址映射到虚拟地址的高半部分，使用高地址访问串口 修改后：
+(1)src/bsp/print.c中 
 
 .. code-block:: c
     
@@ -437,7 +476,7 @@ lab8 作业
     #define GIC_DIST_BASE              (0xffffffff00000000 + 0x08000000)
     #define GIC_CPU_BASE               (0xffffffff00000000 + 0x08010000)
 
-程序可以正常运行。（GIC_DIST_BASE 和 GIC_CPU_BASE 的高位多少个f与你对MMU的配置有关）
+使得程序可以正常运行。（GIC_DIST_BASE 和 GIC_CPU_BASE 的高位多少个f与你对MMU的配置有关）。
 
 
 
