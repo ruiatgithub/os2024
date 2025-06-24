@@ -1,8 +1,14 @@
 实验十 Shell 
 =====================
 
+实现命令行用户接口——Shell。
 
-新建 src/include/prt_shell.h 头文件
+下面我们将实现一个非常简单的命令行用户接口——shell。
+
+基础数据结构：Shell控制块——ShellCB
+--------------------------
+
+新建src/include/prt_shell.h，2.2.2节已介绍，略。
 
 .. code-block:: c
     :linenos:
@@ -33,6 +39,7 @@
 
 接收输入
 --------------------------
+
 QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU使用 -nographic 参数（disable graphical output and redirect serial I/Os to console）时QEMU会将串口重定向到控制台，因此我们可以使用UART作为输入设备。
 
 在 src/bsp/print.c 中的 PRT_UartInit 添加初始化代码，使其支持接收数据中断。 同时定义了用于串口接收的信号量 sem_uart_rx。
@@ -102,7 +109,33 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
         return OS_OK;
     }
 
-简单起见，在 src/bsp/print.c 中实现  OsUartRxHandle() 处理接收中断。
+L32-L50 初始化PL011串口，设成FIFO方法，并启用接收中断（中断号33），相关寄存器请参考：https://developer.arm.com/documentation/ddi0183/g/programmers-model/summary-of-registers?lang=en ；
+L54-L58 创建一个数据接收的信号量 sem_uart_rx，用于数据接收；（可参考实验七）
+
+需在 src/bsp/prt_exc.c 中OsHwiHandleActive() 链接串口中断处理程序。 
+
+.. code-block:: c
+    :linenos:
+
+    extern void OsTickDispatcher(void);
+    extern void OsUartRxHandle(void);
+    OS_SEC_ALW_INLINE INLINE void OsHwiHandleActive(U32 irqNum)
+    {
+        switch(irqNum){
+            case 30: 
+                OsTickDispatcher();
+                // PRT_Printf(".");
+                break;
+            case 33:
+                OsUartRxHandle();
+            default:
+                break;
+        }
+    }
+
+L10-L11，加入串口接收中断处理分支，发生中断时通过 OsUartRxHandle 函数处理。
+
+简单起见，我们直接在 src/bsp/print.c 中实现 OsUartRxHandle() 处理接收中断。
 
 .. code-block:: c
     :linenos:
@@ -132,28 +165,23 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
         return;
     }
 
-在 src/bsp/prt_exc.c 中OsHwiHandleActive() 链接中断和处理函数OsUartRxHandle()
+L1 声明一个外部变量 g_shellCB，它是一个Shell 控制块（ShellCB）。（ :red:`注：该变量在main.c中定义为全局变量`）
+L8-L22 循环读取串口数据缓冲区中的数据，并将字符传入 g_shellCB 的缓冲区 shellBuf 中，同时发送sem_uart_rx 信号量信号。
+- L8、L21 获取串口状态；
+- L9 判断是否还有数据；
+- L11 读取数据，每次1个字节；
+- L15-L16 将字符存入缓冲区；
+- L17-L18 循环存储；
+- L20 发送sem_uart_rx 信号量信号；
 
-.. code-block:: c
-    :linenos:
+Shell处理
+--------------------------
 
-    extern void OsTickDispatcher(void);
-    extern void OsUartRxHandle(void);
-    OS_SEC_ALW_INLINE INLINE void OsHwiHandleActive(U32 irqNum)
-    {
-        switch(irqNum){
-            case 30: 
-                OsTickDispatcher();
-                // PRT_Printf(".");
-                break;
-            case 33:
-                OsUartRxHandle();
-            default:
-                break;
-        }
-    }
+Shell命令
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
+首先我们实现两条shell命令：
+(1)显示当前系统中所有的任务信息
 在 src/kernel/task/prt_task.c 中加入函数
 
 .. code-block:: c
@@ -175,6 +203,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
 
     }
 
+(2)显示当前的时钟Tick
 在 src/kernel/tick/prt_tick.c 中加入函数
 
 .. code-block:: c
@@ -187,8 +216,8 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
     }
 
 
-shell 处理
---------------------------
+Shell命令解析
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 新建 src/shell/shmsg.c 文件。
 
@@ -274,13 +303,23 @@ shell 处理
         }
     }
 
+我们将shell实现为1个任务，ShellTaskInit 函数（L55-L78）将创建该任务，其任务函数为 ShellTask 函数（L13-L53），其主要包括：
+- L21 Shell任务永不退出；
+- L22 打印Shell提示符；
+- L24-L27 初始化cmd命令接收缓冲区，置位全0；
+- L30 等待sem_uart_rx信号量信号，如果有信号，说明通过串口接收到了字符；
+- L33-L38 读取shellCB缓冲区的字符到cmd命令接收缓冲区；
+- L40 回显接收到的串口字符；
+- L41-L49 如果收到的字符是 ‘\r’，解析是何种命令，并调用对应的shell命令函数（2.3.3.1节）进行处理。
 
+:red:`.. hint:: ShellTaskInit 函数在main() `函数中调用。`
 
+:red:`.. hint:: 将新增文件加入构建系统。`
 
+    若一切正常，系统应该正常运行并输出：
+    .. image:: result.png
 
-
-
-.. hint:: 将新增文件加入构建系统
+:red:`.. hint:: 为方便体验和对照，我们在代码仓提供实验九的全部代码。`
 
 lab9 作业
 --------------------------
@@ -289,3 +328,5 @@ lab9 作业
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 实现一条有用的 shell 指令。
+
+.. hint:: 可以参考linux常用指令。

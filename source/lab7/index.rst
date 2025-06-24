@@ -1,10 +1,11 @@
 实验七 信号量与同步 
 =====================
+本实验旨在实现信号量机制。信号量是一种同步机制，主要用于避免多个进程或线程同时访问共享资源导致的竞态条件。
 
-信号量结构初始化
+基础数据结构：信号量控制块
 --------------------------
 
-新建 lab7/src/include/prt_sem_external.h 头文件
+新建 lab7/src/include/prt_sem_external.h 头文件，代码如下：
 
 .. code-block:: C
     :linenos:
@@ -79,8 +80,18 @@
 
     #endif /* PRT_SEM_EXTERNAL_H */
 
+L30-L58 定义了信号量控制块，其中：
+- L40 semCount 用于信号量计数；
+- L42 semList 列表链接阻塞在此信号量上的任务；
+- L44 semBList 列表仅用于二值信号量。
+L22-L28 定义了一些与信号量相关的宏，如：
+- L22 GET_SEM_LIST 宏所用 LIST_COMPONENT 宏在实验六中定义，该宏根据链表节点ptr地址（L42 处：struct TagListObject semList;）返回对应容器即信号量控制块的首地址。
+- L23 GET_SEM 宏根据semid返回对应信号量控制块地址。
 
-新建 src/kernel/sem/prt_sem_init.c 文件。
+信号量初始化
+--------------------------
+
+在src/kernel/sem/prt_sem_init.c中加入以下代码：
 
 .. code-block:: c
     :linenos:
@@ -191,15 +202,28 @@
         return ret;
     }
 
-在 src/bsp/os_cpu_armv8_external.h 加入 定义
+L12-L41 实现 OsSemInit 函数，该函数用于初始化全部信号量控制块。与任务控制块的初始化原理基本类似，我们基于所实现的简单的内存分配函数 OsMemAllocAlign 分配4k的内存空间供信号量控制块使用。这也解释了GET_SEM宏的原理。
+- 在初始化后会将所有信号量控制块加入 g_unusedSemList 链表。
+L46-L90 实现 OsSemCreate 函数，该函数将创建一个信号量。 
+- L60-L63 检测是否有空闲的信号量控制块；
+- L66-L67 从空闲信号量控制块链表中取出一个使用；
+- L70-L83 对信号量控制块进行初始化；
+- L85 初始化该信号量的semList （等待该信号量的任务链表）为空；
+- L86 返回信号量id作为semHandle。
+L95-L105 实现 PRT_SemCreate 函数，该函数只是对 OsSemCreate 函数的简单封装。
+
+需要在 src/bsp/os_cpu_armv8_external.h加入所用宏：
 
 .. code-block:: c
     :linenos:
 
     #define OS_SEM_ADDR_ALLOC_ALIGN 2U //按2的幂对齐，即2^2=4字节
 
+信号量操作
+--------------------------
+下面<span style="color:red">实现信号量的Pend和Post操作</span>，对应 PRT_SemPend 函数和 PRT_SemPost 函数。
 
-新建 src/kernel/sem/prt_sem.c 文件。
+在 src/kernel/sem/prt_sem.c 加入以下代码：
 
 .. code-block:: c
     :linenos:
@@ -426,18 +450,39 @@
         return OS_OK;
     }
 
+代码较多，我们分别从 PRT_SemPend 函数和 PRT_SemPost 函数入手来理解代码。
+L106-L155 实现PRT_SemPend 函数：
+- L117 通过 GET_SEM 宏（2.3.1节）依据semHandle获取信号量控制块；
+- L119 关中断并返回状态 intSave；
+- L120-L128 做错误检查；
+- L130 获得当前的运行任务，即正执行 PRT_SemPend 函数的任务；
+- L132-L135 调用 OsSemPendNotNeedSche 函数（L92-L101）检查信号量的值（计数式信号量），如果信号量的值大于0，直接返回；
+- L137-L141 调用 OsSemPendParaCheck 函数（L80-L90）进行信号量等待操作（Pend）时的参数检查；
+- L143 调用 OsSemPendListPut 函数（L30-L54）将当前任务挂到信号量的等待链表上；
+  - L36 将当前任务从就绪队列中移除；（参考实验六）
+  - L38 记录当前任务所等待的信号量；（参考实验六 任务控制块结构代码部分的L25）
+  - L40 设置当前任务为<span style="color:red">阻塞状态</span>：OS_TSK_PEND；
+  - L42-L50 如果信号量是 SEM_MODE_PRIOR 模式，依据优先级将当前任务插入到信号量的等待链表上并返回；
+  - L52 如果不是 SEM_MODE_PRIOR 模式，依据FIFO将当前任务插入到信号量的等待链表上；
+- L144-L151 进行检查，正常情况下会调用 OsTskScheduleFastPs 函数（L149，该函数<span style="color:red">下一段描述）进行任务切换</span>。
+- L153 恢复中断状态 intSave （对应L119行）。注意：能运行到此处说明已经得到等待的信号量（或出错了），因为L149已会切换到其他任务运行，当前任务阻塞了。
 
-src/include/prt_task_external.h 加入 OsTskReadyAddBgd()
+L183-L221 实现 PRT_SemPost 函数：
+- L189-L191 检查 semHandle 是否有效；
+- L193 通过 GET_SEM 宏（2.3.1节）依据semHandle获取信号量控制块；
+- L196-L200 进行Post操作参数检查；
+- L203-L206 调用 OsSemPostIsInvalid 函数（L169-L178）检查是否能进行有效的Post操作；
+- L209-L217 进行信号量Post操作：
+  - L209-L212 如果有等待此信号量的任务（L209），通过调用 OsSemPostSchePre 函数（L157-L163）获取即将解除阻塞的任务，然后调用 OsTskScheduleFastPs 函数执行任务切换；其中 OsSemPostSchePre 函数会调用 OsSemPendListGet 函数（L59-L78）从信号量的等待列表中移除一个任务并将其加入就绪队列：
+    - L61 获取信号量等待列表中的第一个任务对应的任务控制块；（<span style="color:red">注意：该等待列表中的任务已经按优先级或FIFO方式排列</span>）
+    - L63 将该等待节点从信号量链表中移除；
+    - L65-L67 如果是因为定时等待而阻塞，将任务同时从 taskCb->timerList （参见实验六任务控制块结构代码L36）中移除；
+    - L70 清除任务的 OS_TSK_TIMEOUT | OS_TSK_PEND 状态；
+    - L73-L75 调用 OsTskReadyAddBgd 函数（<span style="color:red">稍后描述</span>）将任务加入就绪队列；
+  - L213-L217 如果没有等待此信号量的任务（L213），信号量值+1；
 
-.. code-block:: c
-    :linenos:
-
-    OS_SEC_ALW_INLINE INLINE void OsTskReadyAddBgd(struct TagTskCb *task)
-    {
-        OsTskReadyAdd(task);
-    }
-
-src/kernel/task/prt_task.c 加入 OsTskScheduleFastPs()
+下面我们介绍 OsTskScheduleFastPs 函数。
+在src/kernel/task/prt_task.c 加入 OsTskScheduleFastPs()
 
 .. code-block:: c
     :linenos:
@@ -462,7 +507,11 @@ src/kernel/task/prt_task.c 加入 OsTskScheduleFastPs()
         }
     }
 
-src/bsp/os_cpu_armv8_external.h 加入 OsTaskTrapFastPs()
+L8 查找最高优先级任务。
+L12 将内核设成请求调度状态。
+L16 若目前不是中断处理，调用 OsTaskTrapFastPs 函数（<span style="color:red">下一段给出代码</span>）经由OsTaskTrap 函数（<span style="color:red">实验六已详细描述</span>）进行任务切换。
+
+需要在src/bsp/os_cpu_armv8_external.h 加入 OsTaskTrapFastPs()
 
 .. code-block:: C
     :linenos:
@@ -473,12 +522,25 @@ src/bsp/os_cpu_armv8_external.h 加入 OsTaskTrapFastPs()
         OsTaskTrap();
     }
 
-加入 src/include/prt_sem.h [`下载 <../\_static/prt_sem.h>`_]，该头文件主要是信号量相关的函数声明和宏定义。
+需要在src/include/prt_task_external.h 加入 OsTskReadyAddBgd()
 
+.. code-block:: c
+    :linenos:
+
+    OS_SEC_ALW_INLINE INLINE void OsTskReadyAddBgd(struct TagTskCb *task)
+    {
+        OsTskReadyAdd(task);
+    }
+
+需要加入 src/include/prt_sem.h （代码仓提供完整代码），该头文件主要是信号量相关的函数声明和宏定义。
+
+.. hint:: 我们在代码仓提供 prt_sem.h 的完整代码。
 .. hint:: 将新增文件加入构建系统
 
-验证
+任务同步验证
 --------------------------
+
+main.c作适当修改测试任务同步的信号量机制。
 
 .. code-block:: c
     :linenos:
@@ -593,7 +655,15 @@ src/bsp/os_cpu_armv8_external.h 加入 OsTaskTrapFastPs()
 
     }
 
+L16-L26 是第一个任务，该任务会调用 PRT_SemPost 发送信号；
+L28-L39 是第二个任务，该任务会调用 PRT_SemPend 等待信号；
+L45 执行信号系统初始化；
+L59 创建1个信号量；
+L69-L83 创建任务1并启动，优先级35；
+L87-L101 创建任务2并启动，优先级30；
 
+如果一切正常，运行结果如下：
+.. image:: lab7_result.jpg
 
 lab7 作业
 --------------------------
