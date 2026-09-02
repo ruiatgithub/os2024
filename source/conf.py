@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'os2024 lab'
-copyright = '2024, 湖南大学 李蕊(rui@hnu.edu.cn) '
+copyright = '2024, 湖南大学 李蕊(rui@hnu.edu.cn)、杨科华 '
 author = 'rui@hnu.edu.cn'
 
 # -- General configuration ---------------------------------------------------
